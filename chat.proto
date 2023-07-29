@@ -2,10 +2,21 @@ syntax = "proto3";
 package chat;
 option go_package = ".;chat";
 
+message Sent {
+}
+
 message Message {
-  string body = 1;
+  repeated Response body = 1;
+}
+
+message Response {
+  int32 albumId = 1;
+  int32 id = 2;
+  string title = 3;
+  string url = 4;
+  string thumbnailUrl = 5;
 }
 
 service ChatService {
-  rpc SayHello(Message) returns (Message) {}
+  rpc SayHello(Sent) returns (Message) {}
 }

@@ -64,7 +64,7 @@ func (p *Plex) GetEpisodes(seriesId string) []Episode {
 	var data EpisodesResponse
 	err := json.Unmarshal(jsonData, &data)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Failed getting episodes", err)
 	}
 
 	return data.MediaContainer.Metadata
@@ -78,7 +78,7 @@ func (p *Plex) GetSeasons(seriesId string) []Season {
 	var data SeasonsResponse
 	err := json.Unmarshal(jsonData, &data)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Failed getting seasons", err)
 	}
 
 	return data.MediaContainer.Metadata
@@ -92,7 +92,7 @@ func (p *Plex) GetSeries(libraryId uint8) []PlexSeries {
 	var data PlexResponse
 	err := json.Unmarshal(jsonData, &data)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Failed getting series", err)
 	}
 
 	return data.MediaContainer.Metadata

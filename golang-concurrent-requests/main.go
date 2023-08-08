@@ -20,43 +20,54 @@ func main() {
 	log.Println("Started getting full data for all Plex series")
 	series := plexAPI.GetSeries(1)
 	log.Printf("%d series to process", len(series))
-	var episodes []SeasonWithEps
-	var wg sync.WaitGroup
-	count := 1
 
+	ch := make(chan SeasonWithEps)
+	chSeasons := make(chan []plex.Season)
+
+	var wg sync.WaitGroup
 	for _, s := range series {
 		wg.Add(1)
+		go getSeasons(*plexAPI, s.RatingKey, chSeasons, &wg)
+	}
 
-		go func(series plex.PlexSeries) {
-			count += 1
-			seasons := plexAPI.GetSeasons(series.RatingKey)
-
+	go func() {
+		for seasons := range chSeasons {
 			for _, season := range seasons {
 				if season.Index == 0 {
 					continue
 				}
 				wg.Add(1)
-
-				go func(season plex.Season) {
-					count += 1
-					eps := plexAPI.GetEpisodes(season.RatingKey)
-					episodes = append(episodes, SeasonWithEps{
-						Season:   season,
-						Episodes: eps,
-					})
-
-					defer wg.Done()
-				}(season)
+				go getEpisodes(*plexAPI, season, ch, &wg)
 			}
+		}
+	}()
 
-			defer wg.Done()
-		}(s)
+	go func() {
+		wg.Wait()
+		close(chSeasons)
+		close(ch)
+	}()
+
+	var episodes []SeasonWithEps
+	for res := range ch {
+		episodes = append(episodes, res)
 	}
 
-	wg.Wait()
+	for _, ep := range episodes {
+		log.Printf("%s: season %d - episodes: %d", ep.Season.ParentTitle, ep.Season.Index, len(ep.Episodes))
+	}
+}
 
-	// for _, ep := range episodes {
-	// 	log.Printf("%s: season %d - episodes: %d", ep.Season.ParentTitle, ep.Season.Index, len(ep.Episodes))
-	// }
-	log.Printf("Requests made: %d", count)
+func getEpisodes(plexAPI plex.Plex, season plex.Season, ch chan<- SeasonWithEps, wg *sync.WaitGroup) {
+	eps := plexAPI.GetEpisodes(season.RatingKey)
+	ch <- SeasonWithEps{
+		Season:   season,
+		Episodes: eps,
+	}
+	defer wg.Done()
+}
+
+func getSeasons(plexAPI plex.Plex, ratingKey string, ch chan<- []plex.Season, wg *sync.WaitGroup) {
+	ch <- plexAPI.GetSeasons(ratingKey)
+	defer wg.Done()
 }

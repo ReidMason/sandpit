@@ -10,16 +10,17 @@ import (
 )
 
 type Plex struct {
-	url   string
-	token string
+	url    string
+	token  string
+	client http.Client
 }
 
 func New(url string, token string) *Plex {
-	return &Plex{url, token}
+	return &Plex{url, token, http.Client{}}
 }
 
-func (p *Plex) GetEpisodes(seriesId string) []Episode {
-	url, err := url.Parse(p.url + fmt.Sprintf("/library/metadata/%s/children", seriesId))
+func (p *Plex) MakeRequest(urlPath string) []byte {
+	url, err := url.Parse(urlPath)
 
 	if err != nil {
 		log.Fatal(err)
@@ -52,8 +53,16 @@ func (p *Plex) GetEpisodes(seriesId string) []Episode {
 		log.Fatal(err)
 	}
 
+	return jsonData
+}
+
+func (p *Plex) GetEpisodes(seriesId string) []Episode {
+	url := p.url + fmt.Sprintf("/library/metadata/%s/children", seriesId)
+
+	jsonData := p.MakeRequest(url)
+
 	var data EpisodesResponse
-	err = json.Unmarshal(jsonData, &data)
+	err := json.Unmarshal(jsonData, &data)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -62,41 +71,12 @@ func (p *Plex) GetEpisodes(seriesId string) []Episode {
 }
 
 func (p *Plex) GetSeasons(seriesId string) []Season {
-	url, err := url.Parse(p.url + fmt.Sprintf("/library/metadata/%s/children", seriesId))
+	url := p.url + fmt.Sprintf("/library/metadata/%s/children", seriesId)
 
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	q := url.Query()
-	q.Set("X-Plex-Token", p.token)
-	url.RawQuery = q.Encode()
-
-	req, err := http.NewRequest("GET", url.String(), nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	headers := http.Header{
-		"Content-Type": {"application/json"},
-		"Accept":       {"application/json"},
-	}
-	// Add headers
-	req.Header = headers
-
-	client := http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	jsonData, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
+	jsonData := p.MakeRequest(url)
 
 	var data SeasonsResponse
-	err = json.Unmarshal(jsonData, &data)
+	err := json.Unmarshal(jsonData, &data)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -105,40 +85,12 @@ func (p *Plex) GetSeasons(seriesId string) []Season {
 }
 
 func (p *Plex) GetSeries(libraryId uint8) []PlexSeries {
-	url, err := url.Parse(p.url + fmt.Sprintf("/library/sections/%d/all", libraryId))
-	if err != nil {
-		log.Fatal(err)
-	}
+	url := p.url + fmt.Sprintf("/library/sections/%d/all", libraryId)
 
-	q := url.Query()
-	q.Set("X-Plex-Token", p.token)
-	url.RawQuery = q.Encode()
-
-	req, err := http.NewRequest("GET", url.String(), nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	headers := http.Header{
-		"Content-Type": {"application/json"},
-		"Accept":       {"application/json"},
-	}
-	// Add headers
-	req.Header = headers
-
-	client := http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	jsonData, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
+	jsonData := p.MakeRequest(url)
 
 	var data PlexResponse
-	err = json.Unmarshal(jsonData, &data)
+	err := json.Unmarshal(jsonData, &data)
 	if err != nil {
 		log.Fatal(err)
 	}

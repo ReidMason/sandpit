@@ -29,6 +29,7 @@ func main() {
 
 	// create an author
 	insertedAuthor, err := queries.CreateAuthor(ctx, testDatabase.CreateAuthorParams{
+		ID:   2,
 		Name: "Brian Kernighan",
 		Bio:  sql.NullString{String: "Co-author of The C Programming Language and The Go Programming Language", Valid: true},
 	})
@@ -36,6 +37,13 @@ func main() {
 		log.Panic(err)
 	}
 	log.Println(insertedAuthor)
+
+	ids := []int32{1, 2}
+	authorsWithBooks, err := queries.GetAuthorsWithBooks(ctx, ids)
+	if err != nil {
+		log.Panic(err)
+	}
+	log.Println(authorsWithBooks)
 
 	// get the author we just inserted
 	fetchedAuthor, err := queries.GetAuthor(ctx, insertedAuthor.ID)

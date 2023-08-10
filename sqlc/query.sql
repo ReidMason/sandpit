@@ -8,9 +8,9 @@ ORDER BY name;
 
 -- name: CreateAuthor :one
 INSERT INTO authors (
-  name, bio
+  id, name, bio
 ) VALUES (
-  $1, $2
+  $1, $2, $3 
 )
 RETURNING *;
 
@@ -21,3 +21,10 @@ WHERE id = $1;
 -- name: GetAuthorById :one
 SELECT name FROM authors
 WHERE id = $1 LIMIT 1;
+
+-- name: GetAuthorsWithBooks :many
+SELECT * FROM authors
+INNER JOIN books on books.authorid = authors.id
+-- For Databases other than Postgres
+-- WHERE authors.id in (sqlc.slice('ids'));
+WHERE authors.id = ANY($1::int[]);

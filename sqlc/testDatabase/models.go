@@ -10,6 +10,12 @@ import (
 
 type Author struct {
 	ID   int64
-	Name string
 	Bio  sql.NullString
+	Name string
+}
+
+type Book struct {
+	ID       int64
+	Authorid int64
+	Title    string
 }

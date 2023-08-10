@@ -29,11 +29,14 @@ func main() {
 	}
 
 	// Migrate to latests version
-	m.Up()
-
-	// Go to that specific version
-	err = m.Migrate(1)
+	err = m.Up()
 	if err != nil {
 		log.Panic(err)
 	}
+
+	// Go to that specific version
+	// err = m.Migrate(1)
+	// if err != nil {
+	// 	log.Panic(err)
+	// }
 }

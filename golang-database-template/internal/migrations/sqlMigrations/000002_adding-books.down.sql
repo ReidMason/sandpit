@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS books;
+
+DELETE FROM authors WHERE id = 1;

@@ -1,0 +1,6 @@
+[psql]
+dbname = "testdb"
+host = "localhost"
+user = "user"
+pass = "password"
+sslmode = "disable"

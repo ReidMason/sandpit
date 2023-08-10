@@ -1,0 +1,2 @@
+ALTER TABLE Authors
+DROP COLUMN name;

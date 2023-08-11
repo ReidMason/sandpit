@@ -27,10 +27,4 @@ func GetDatabaseMigrationInstance(db *sql.DB) *migrate.Migrate {
 	}
 
 	return m
-
-	// Go to that specific version
-	// err = m.Migrate(1)
-	// if err != nil {
-	// 	log.Panic(err)
-	// }
 }

@@ -34,3 +34,5 @@ Then generate your functions.
 ```bash
 sqlc generate -f sqlc/sqlc.yaml
 ```
+
+You should also use the `diff` commands to make sure your queries are well formatted and match the generated code.

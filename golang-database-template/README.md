@@ -9,7 +9,10 @@ It's here to reference what libraries and being used, how they are being used an
 
 Migrations are handled by [golang-migrate](https://github.com/golang-migrate/migrate)\
 First you need to install the [golang-migrate CLI tool](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate)\
-You can then create a migration
+
+#### Create a migration
+
+You can then create a migration giving it a name
 
 ```bash
 migrate create -ext sql -dir internal/migrations/sqlMigrations -seq initial-db-setup

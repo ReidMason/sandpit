@@ -71,8 +71,8 @@ type GetAuthorsWithBooksRow struct {
 	Title    sql.NullString
 }
 
-func (q *Queries) GetAuthorsWithBooks(ctx context.Context, dollar_1 []int32) ([]GetAuthorsWithBooksRow, error) {
-	rows, err := q.db.QueryContext(ctx, getAuthorsWithBooks, pq.Array(dollar_1))
+func (q *Queries) GetAuthorsWithBooks(ctx context.Context, ids []int32) ([]GetAuthorsWithBooksRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAuthorsWithBooks, pq.Array(ids))
 	if err != nil {
 		return nil, err
 	}

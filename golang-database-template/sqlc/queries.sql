@@ -21,4 +21,4 @@ WHERE id = $1;
 -- name: GetAuthorsWithBooks :many
 SELECT * FROM authors
 LEFT JOIN books on books.authorid = authors.id
-WHERE authors.id = ANY($1::int[]);
+WHERE authors.id = ANY(sqlc.arg(ids)::int[]);

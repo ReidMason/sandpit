@@ -10,14 +10,9 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func GetDatabaseMigrationInstance(connectionString string) *migrate.Migrate {
+func GetDatabaseMigrationInstance(db *sql.DB) *migrate.Migrate {
 	driverName := "postgres"
 	migrationsFilepath := "file://internal/migrations/sqlMigrations"
-
-	db, err := sql.Open(driverName, connectionString)
-	if err != nil {
-		log.Panic("Failed to connect to database", err)
-	}
 
 	driver, err := postgres.WithInstance(db, &postgres.Config{})
 	if err != nil {

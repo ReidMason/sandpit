@@ -1,28 +1,27 @@
 package main
 
 import (
+	"database/sql"
 	"golang-database-template/internal/migrations"
 	"log"
 )
 
 func main() {
-	scratchMigrateDatabase()
+	// Note: The 'testdb' database has already been created using docker compose, the database needs to exist first
+	connectionString := "postgres://user:password@localhost:5432/testdb?sslmode=disable"
+	db, err := sql.Open("postgres", connectionString)
+	if err != nil {
+		log.Panic("Failed to connect to database", err)
+	}
+
+	scratchMigrateDatabase(db)
 }
 
-func scratchMigrateDatabase() {
-	connectionString := "postgres://user:password@localhost:5432/testdb?sslmode=disable"
-	migrationInstance := migrations.GetDatabaseMigrationInstance(connectionString)
+func scratchMigrateDatabase(db *sql.DB) {
+	migrationInstance := migrations.GetDatabaseMigrationInstance(db)
 
-	// Clear the database completely to clean reset
-	// There's a weird bug where this breaks the up migration
-	err := migrationInstance.Drop()
-	if err != nil {
-		log.Fatal(err)
-	}
-	migrationInstance.Close()
-
-	migrationInstance = migrations.GetDatabaseMigrationInstance(connectionString)
-	err = migrationInstance.Up()
+	migrationInstance = migrations.GetDatabaseMigrationInstance(db)
+	err := migrationInstance.Up()
 	if err != nil {
 		log.Fatal(err)
 	}

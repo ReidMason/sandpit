@@ -26,5 +26,8 @@ func ApplyMigrations(db *sql.DB) {
 		log.Panic(err)
 	}
 
-	m.Up()
+	err = m.Up()
+	if err != nil && err.Error() != migrate.ErrNoChange.Error() {
+		log.Fatal(err)
+	}
 }

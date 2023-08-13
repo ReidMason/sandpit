@@ -25,31 +25,9 @@ func main() {
 	ctx := context.Background()
 	queries := animeDb.New(db)
 
-	animeResult := getAnime(113415)
-	byteResult, err := json.Marshal(animeResult)
-	if err != nil {
-		log.Print(err)
-	}
+	animeResult := getAnime(113415, queries, ctx)
 
-	_, err = queries.CacheAnimeResult(ctx, animeDb.CacheAnimeResultParams{
-		ID:       1,
-		Response: byteResult,
-	})
-	if err != nil {
-		log.Println(err)
-	}
-
-	res, err := queries.GetCachedAnimeResult(ctx, 1)
-	if err != nil {
-		log.Println(err)
-	}
-	var data dtos.AnimeResponse
-	err = json.Unmarshal(res, &data)
-	if err != nil {
-		log.Println(err)
-	}
-
-	log.Println(data)
+	log.Print(animeResult)
 }
 
 type GraphqlBody[T any] struct {
@@ -58,10 +36,23 @@ type GraphqlBody[T any] struct {
 }
 
 type GetAnimeVariables struct {
-	AnimeId int `json:"anime_id"`
+	AnimeId int32 `json:"anime_id"`
 }
 
-func getAnime(animeId int) dtos.AnimeResponse {
+func getAnime(animeId int32, queries *animeDb.Queries, ctx context.Context) dtos.AnimeResponse {
+	res, err := queries.GetCachedAnimeResult(ctx, animeId)
+	if err == nil {
+		var data dtos.AnimeResponse
+		err = json.Unmarshal(res, &data)
+		if err != nil {
+			log.Print(err)
+		}
+
+		return data
+	}
+
+	log.Println("Not found making request")
+
 	url := "https://graphql.anilist.co/"
 
 	query := `query ($anime_id: Int) {
@@ -140,6 +131,14 @@ func getAnime(animeId int) dtos.AnimeResponse {
 	err = json.Unmarshal(jsonData, &data)
 	if err != nil {
 		log.Print(err)
+	}
+
+	_, err = queries.CacheAnimeResult(ctx, animeDb.CacheAnimeResultParams{
+		ID:       int32(data.Data.Media.ID),
+		Response: jsonData,
+	})
+	if err != nil {
+		log.Println(err)
 	}
 
 	return data

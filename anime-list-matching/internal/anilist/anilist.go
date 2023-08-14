@@ -19,16 +19,16 @@ type GetAnimeVariables struct {
 	AnimeId int32 `json:"anime_id"`
 }
 
-func GetAnime(animeId int32, queries *animeDb.Queries, ctx context.Context) AnimeResponse {
+func GetAnime(animeId int32, queries *animeDb.Queries, ctx context.Context) Anime {
 	res, err := queries.GetCachedAnimeResult(ctx, animeId)
 	if err == nil {
-		var data AnimeResponse
-		err = json.Unmarshal(res, &data)
+		var anime Anime
+		err = json.Unmarshal(res, &anime)
 		if err != nil {
 			log.Print(err)
 		}
 
-		return data
+		return anime
 	}
 
 	log.Println("Not found making request")
@@ -113,13 +113,46 @@ func GetAnime(animeId int32, queries *animeDb.Queries, ctx context.Context) Anim
 		log.Print(err)
 	}
 
+	anime := cleanUpAnimeResult(data)
+	animeJson, err := json.Marshal(anime)
+	if err != nil {
+		log.Println("Failed to serialize anime for caching", err)
+	}
+
 	_, err = queries.CacheAnimeResult(ctx, animeDb.CacheAnimeResultParams{
 		ID:       int32(data.Data.Media.ID),
-		Response: jsonData,
+		Response: animeJson,
 	})
 	if err != nil {
 		log.Println(err)
 	}
 
-	return data
+	return anime
+}
+
+func cleanUpAnimeResult(response AnimeResponse) Anime {
+	anime := Anime{
+		ID:        response.Data.Media.ID,
+		Format:    response.Data.Media.Format,
+		Episodes:  response.Data.Media.Episodes,
+		Synonyms:  response.Data.Media.Synonyms,
+		Status:    response.Data.Media.Status,
+		EndDate:   response.Data.Media.EndDate,
+		StartDate: response.Data.Media.StartDate,
+		Title:     response.Data.Media.Title,
+	}
+
+	for i, edge := range response.Data.Media.Relations.Edges {
+		node := response.Data.Media.Relations.Nodes[i]
+
+		anime.Relations = append(anime.Relations, Relation{
+			ID:        node.ID,
+			Format:    node.Format,
+			Relation:  edge.RelationType,
+			EndDate:   node.EndDate,
+			StartDate: node.StartDate,
+		})
+	}
+
+	return anime
 }

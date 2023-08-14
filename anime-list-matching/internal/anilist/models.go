@@ -31,7 +31,7 @@ type AnimeResult struct {
 			RelationType string `json:"relationType"`
 		} `json:"edges"`
 		Nodes []struct {
-			ID      int    `json:"id"`
+			ID      int32  `json:"id"`
 			Format  string `json:"format"`
 			EndDate struct {
 				Year  any `json:"year"`
@@ -71,7 +71,7 @@ type Anime struct {
 }
 
 type Relation struct {
-	ID       int    `json:"id"`
+	ID       int32  `json:"id"`
 	Format   string `json:"format"`
 	Relation string `json:"relation"`
 	EndDate  struct {
@@ -85,3 +85,19 @@ type Relation struct {
 		Day   int `json:"day"`
 	} `json:"startDate"`
 }
+
+const (
+	Adaptation  = "ADAPTATION"
+	Prequel     = "PREQUEL"
+	Sequel      = "SEQUEL"
+	Parent      = "PARENT"
+	SideStory   = "SIDE_STORY"
+	Character   = "CHARACTER"
+	Summary     = "SUMMARY"
+	Alternative = "ALTERNATIVE"
+	SpinOff     = "SPIN_OFF"
+	Other       = "OTHER"
+	Source      = "SOURCE"
+	Compilation = "COMPILATION"
+	Contains    = "CONTAINS"
+)

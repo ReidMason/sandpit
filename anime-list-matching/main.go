@@ -6,6 +6,7 @@ import (
 	"anime-list-matching/internal/migrations"
 	"context"
 	"database/sql"
+	"errors"
 	"log"
 )
 
@@ -21,7 +22,31 @@ func main() {
 	ctx := context.Background()
 	queries := animeDb.New(db)
 
-	animeResult := anilist.GetAnime(113415, queries, ctx)
+	recurseAnime(16498, queries, ctx)
 
-	log.Print(animeResult)
+	// animeResult := anilist.GetAnime(113415, queries, ctx)
+
+	// log.Print(animeResult)
+}
+
+func recurseAnime(animeId int32, queries *animeDb.Queries, ctx context.Context) (anilist.Anime, error) {
+	anime := anilist.GetAnime(animeId, queries, ctx)
+	log.Println(anime.Title.Romaji)
+
+	sequelId, err := getSequelID(anime.Relations)
+	if err != nil {
+		return anilist.Anime{}, errors.New("No sequel found")
+	}
+
+	return recurseAnime(sequelId, queries, ctx)
+}
+
+func getSequelID(relations []anilist.Relation) (int32, error) {
+	for _, relation := range relations {
+		if relation.Relation == anilist.Sequel {
+			return relation.ID, nil
+		}
+	}
+
+	return 0, errors.New("No sequel found")
 }

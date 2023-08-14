@@ -1,4 +1,4 @@
-package dtos
+package anilist
 
 type AnimeResponse struct {
 	Data struct {

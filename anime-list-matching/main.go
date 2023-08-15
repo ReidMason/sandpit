@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"errors"
 	"log"
+	"strings"
 )
 
 func main() {
@@ -22,24 +23,26 @@ func main() {
 	ctx := context.Background()
 	queries := animeDb.New(db)
 
-	recurseAnime(16498, make([]anilist.Anime, 1), queries, ctx)
+	recurseAnime(16498, make([]anilist.Anime, 0), queries, ctx)
 
 	// animeResult := anilist.GetAnime(113415, queries, ctx)
 
 	// log.Print(animeResult)
 }
 
-func recurseAnime(animeId int32, path []anilist.Anime, queries *animeDb.Queries, ctx context.Context) (anilist.Anime, error) {
+func recurseAnime(animeId int32, path []anilist.Anime, queries *animeDb.Queries, ctx context.Context) error {
 	anime := anilist.GetAnime(animeId, queries, ctx)
 	path = append(path, anime)
-	log.Println(anime.Title.Romaji)
 
 	sequelId, err := getSequelID(anime.Relations)
 	if err != nil {
-		return anilist.Anime{}, errors.New("No sequel found")
+		printTraversalPath(path)
+		return errors.New("No sequel found")
 	}
 
-	return recurseAnime(sequelId, path, queries, ctx)
+	recurseAnime(sequelId, path, queries, ctx)
+
+	return nil
 }
 
 func getSequelID(relations []anilist.Relation) (int32, error) {
@@ -50,4 +53,18 @@ func getSequelID(relations []anilist.Relation) (int32, error) {
 	}
 
 	return 0, errors.New("No sequel found")
+}
+
+func printTraversalPath(path []anilist.Anime) {
+	for i, anime := range path {
+		log.Println(strings.Repeat(" ", i), getTraversalPathPrefix(i), anime.Title.Romaji)
+	}
+}
+
+func getTraversalPathPrefix(index int) string {
+	if index == 0 {
+		return ""
+	}
+
+	return " ∟"
 }

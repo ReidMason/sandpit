@@ -34,7 +34,7 @@ func recurseAnime(animeId int32, path []anilist.Anime, queries *animeDb.Queries,
 	anime := anilist.GetAnime(animeId, queries, ctx)
 	path = append(path, anime)
 
-	sequelId, err := getSequelID(anime.Relations)
+	sequelId, err := getRelationSeriesId(anime.Relations, anilist.Sequel)
 	if err != nil {
 		printTraversalPath(path)
 		return errors.New("No sequel found")
@@ -42,17 +42,25 @@ func recurseAnime(animeId int32, path []anilist.Anime, queries *animeDb.Queries,
 
 	recurseAnime(sequelId, path, queries, ctx)
 
+	sideStoryId, err := getRelationSeriesId(anime.Relations, anilist.SideStory)
+	if err != nil {
+		printTraversalPath(path)
+		return errors.New("No side story found")
+	}
+
+	recurseAnime(sideStoryId, path, queries, ctx)
+
 	return nil
 }
 
-func getSequelID(relations []anilist.Relation) (int32, error) {
+func getRelationSeriesId(relations []anilist.Relation, targetRelation string) (int32, error) {
 	for _, relation := range relations {
-		if relation.Relation == anilist.Sequel {
+		if relation.Relation == targetRelation {
 			return relation.ID, nil
 		}
 	}
 
-	return 0, errors.New("No sequel found")
+	return 0, errors.New("No relation found")
 }
 
 func printTraversalPath(path []anilist.Anime) {

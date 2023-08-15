@@ -22,15 +22,16 @@ func main() {
 	ctx := context.Background()
 	queries := animeDb.New(db)
 
-	recurseAnime(16498, queries, ctx)
+	recurseAnime(16498, make([]anilist.Anime, 1), queries, ctx)
 
 	// animeResult := anilist.GetAnime(113415, queries, ctx)
 
 	// log.Print(animeResult)
 }
 
-func recurseAnime(animeId int32, queries *animeDb.Queries, ctx context.Context) (anilist.Anime, error) {
+func recurseAnime(animeId int32, path []anilist.Anime, queries *animeDb.Queries, ctx context.Context) (anilist.Anime, error) {
 	anime := anilist.GetAnime(animeId, queries, ctx)
+	path = append(path, anime)
 	log.Println(anime.Title.Romaji)
 
 	sequelId, err := getSequelID(anime.Relations)
@@ -38,7 +39,7 @@ func recurseAnime(animeId int32, queries *animeDb.Queries, ctx context.Context) 
 		return anilist.Anime{}, errors.New("No sequel found")
 	}
 
-	return recurseAnime(sequelId, queries, ctx)
+	return recurseAnime(sequelId, path, queries, ctx)
 }
 
 func getSequelID(relations []anilist.Relation) (int32, error) {

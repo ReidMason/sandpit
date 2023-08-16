@@ -23,44 +23,60 @@ func main() {
 	ctx := context.Background()
 	queries := animeDb.New(db)
 
-	recurseAnime(16498, make([]anilist.Anime, 0), queries, ctx)
+	targetEps := 88
+	path, err := recurseAnime(16498, make([]anilist.Anime, 0), targetEps, queries, ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	// animeResult := anilist.GetAnime(113415, queries, ctx)
-
-	// log.Print(animeResult)
+	log.Print("Done mathcing anime found:")
+	printTraversalPath(path)
 }
 
-func recurseAnime(animeId int32, path []anilist.Anime, queries *animeDb.Queries, ctx context.Context) error {
+func recurseAnime(animeId int32, path []anilist.Anime, targetEps int, queries *animeDb.Queries, ctx context.Context) ([]anilist.Anime, error) {
+	if animeId == 0 {
+		return nil, errors.New("No anime found")
+	}
+
 	anime := anilist.GetAnime(animeId, queries, ctx)
 	path = append(path, anime)
 
-	sequelId, err := getRelationSeriesId(anime.Relations, anilist.Sequel)
-	if err != nil {
-		printTraversalPath(path)
-		return errors.New("No sequel found")
+	if targetEps == calculateEpisodes(path) {
+		return path, nil
 	}
 
-	recurseAnime(sequelId, path, queries, ctx)
-
-	sideStoryId, err := getRelationSeriesId(anime.Relations, anilist.SideStory)
-	if err != nil {
-		printTraversalPath(path)
-		return errors.New("No side story found")
+	sequelId := getRelationSeriesId(anime.Relations, anilist.Sequel)
+	res, err := recurseAnime(sequelId, path, targetEps, queries, ctx)
+	if err == nil {
+		return res, nil
 	}
 
-	recurseAnime(sideStoryId, path, queries, ctx)
+	sideStoryId := getRelationSeriesId(anime.Relations, anilist.SideStory)
+	res, err = recurseAnime(sideStoryId, path, targetEps, queries, ctx)
+	if err == nil {
+		return res, nil
+	}
 
-	return nil
+	return nil, errors.New("No match found")
 }
 
-func getRelationSeriesId(relations []anilist.Relation, targetRelation string) (int32, error) {
+func getRelationSeriesId(relations []anilist.Relation, targetRelation string) int32 {
 	for _, relation := range relations {
 		if relation.Relation == targetRelation {
-			return relation.ID, nil
+			return relation.ID
 		}
 	}
 
-	return 0, errors.New("No relation found")
+	return 0
+}
+
+func calculateEpisodes(animeList []anilist.Anime) int {
+	count := 0
+	for _, anime := range animeList {
+		count += anime.Episodes
+	}
+
+	return count
 }
 
 func printTraversalPath(path []anilist.Anime) {

@@ -15,6 +15,11 @@ func MatchAnime(animeId int32, path []anilist.Anime, targetEps int, queries *ani
 	}
 
 	anime := anilist.GetAnime(animeId, queries, ctx)
+
+	if countEpisodes(path)+anime.Episodes > targetEps {
+		return path, nil
+	}
+
 	path = append(path, anime)
 
 	if targetEps == calculateEpisodes(path) {
@@ -34,6 +39,15 @@ func MatchAnime(animeId int32, path []anilist.Anime, targetEps int, queries *ani
 	}
 
 	return nil, errors.New("No matches found")
+}
+
+func countEpisodes(animes []anilist.Anime) int {
+	count := 0
+	for _, anime := range animes {
+		count += anime.Episodes
+	}
+
+	return count
 }
 
 func getRelationSeriesId(relations []anilist.Relation, targetRelation string) int32 {

@@ -8,7 +8,7 @@ import (
 	"net/url"
 )
 
-func GetSeries(token string) {
+func GetSeries(token string) PlexResponse {
 	url, err := url.Parse("http://10.128.0.100:32400/library/sections/1/all")
 	if err != nil {
 		log.Fatal(err)
@@ -43,7 +43,7 @@ func GetSeries(token string) {
 		log.Print(err)
 	}
 
-	log.Println(data)
+	return data
 }
 
 // func getSeriesAndEps() {

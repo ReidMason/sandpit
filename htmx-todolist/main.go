@@ -15,6 +15,12 @@ type Todo struct {
 
 func main() {
 	h1 := func(w http.ResponseWriter, _ *http.Request) {
+		templ := template.Must(template.ParseFiles("index.html"))
+		templ.Execute(w, nil)
+	}
+	http.HandleFunc("/", h1)
+
+	getTodos := func(w http.ResponseWriter, _ *http.Request) {
 		todos := map[string][]Todo{
 			"Todos": {
 				{
@@ -32,10 +38,10 @@ func main() {
 			},
 		}
 
-		templ := template.Must(template.ParseFiles("index.html"))
+		templ := template.Must(template.ParseFiles("templates/todos.html"))
 		templ.Execute(w, todos)
 	}
-	http.HandleFunc("/", h1)
+	http.HandleFunc("/todos", getTodos)
 
 	log.Fatal(http.ListenAndServe(":8000", nil))
 }

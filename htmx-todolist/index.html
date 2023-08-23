@@ -13,6 +13,11 @@
   </head>
   <body>
     <h1>Todo app</h1>
+    <div>
+      {{ range .Todos }}
+      <p>{{ .Title }}</p>
+      {{end}}
+    </div>
     <div hx-get="https://jsonplaceholder.typicode.com/todos">
       Loading todos...
     </div>

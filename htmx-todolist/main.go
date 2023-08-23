@@ -1,15 +1,39 @@
 package main
 
 import (
-	"io"
 	"log"
 	"net/http"
+	"text/template"
 )
 
+type Todo struct {
+	id        int
+	userId    int
+	Title     string
+	completed bool
+}
+
 func main() {
-	h1 := func(w http.ResponseWriter, r *http.Request) {
-		io.WriteString(w, "Hello World!\n")
-		io.WriteString(w, r.Method)
+	h1 := func(w http.ResponseWriter, _ *http.Request) {
+		todos := map[string][]Todo{
+			"Todos": {
+				{
+					id:        1,
+					userId:    1,
+					Title:     "delectus aut autem",
+					completed: false,
+				},
+				{
+					id:        2,
+					userId:    1,
+					Title:     "quis ut nam facilis et officia qui",
+					completed: false,
+				},
+			},
+		}
+
+		templ := template.Must(template.ParseFiles("index.html"))
+		templ.Execute(w, todos)
 	}
 	http.HandleFunc("/", h1)
 

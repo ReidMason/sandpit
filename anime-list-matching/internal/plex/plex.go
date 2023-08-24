@@ -328,7 +328,7 @@ type Season struct {
 	// Art             string `json:"art"`
 	// ParentThumb     string `json:"parentThumb"`
 	// ParentTheme     string `json:"parentTheme"`
-	// LeafCount       int    `json:"leafCount"`
+	LeafCount int `json:"leafCount"`
 	// ViewedLeafCount int    `json:"viewedLeafCount"`
 	// AddedAt         int    `json:"addedAt"`
 	// UpdatedAt       int    `json:"updatedAt"`

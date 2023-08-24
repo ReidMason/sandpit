@@ -27,23 +27,24 @@ func getIndex(w http.ResponseWriter, _ *http.Request) {
 }
 
 func getTodos(w http.ResponseWriter, _ *http.Request) {
-	todos := map[string][]Todo{
-		"Todos": {
-			{
-				id:        1,
-				userId:    1,
-				Title:     "delectus aut autem",
-				completed: false,
-			},
-			{
-				id:        2,
-				userId:    1,
-				Title:     "quis ut nam facilis et officia qui",
-				completed: false,
-			},
+	todos := []Todo{
+		{
+			id:        1,
+			userId:    1,
+			Title:     "<script>alert('test')</script>",
+			completed: false,
+		},
+		{
+			id:        2,
+			userId:    1,
+			Title:     "quis ut nam facilis et officia qui",
+			completed: false,
 		},
 	}
 
 	templ := template.Must(template.ParseFiles("templates/todos.html"))
-	templ.Execute(w, todos)
+	err := templ.Execute(w, todos)
+	if err != nil {
+		log.Println(err)
+	}
 }

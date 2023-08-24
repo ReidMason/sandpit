@@ -1,5 +1,5 @@
 <div>
-  {{ range .Todos }}
-  <p>{{ .Title }}</p>
+  {{ range . }}
+  <p>{{ .Title | html }}</p>
   {{end}}
 </div>

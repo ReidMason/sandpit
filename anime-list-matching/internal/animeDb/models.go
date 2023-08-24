@@ -14,7 +14,7 @@ type Animeresultcache struct {
 }
 
 type Animesearchcache struct {
-	ID         int64
+	ID         int32
 	Searchterm string
 	Response   json.RawMessage
 }

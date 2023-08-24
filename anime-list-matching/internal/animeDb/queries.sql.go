@@ -32,12 +32,45 @@ func (q *Queries) CacheAnimeResult(ctx context.Context, arg CacheAnimeResultPara
 	return i, err
 }
 
+const cacheAnimeSearch = `-- name: CacheAnimeSearch :one
+INSERT INTO animeSearchCache (
+  searchTerm, response
+) VALUES (
+  $1, $2
+)
+ON CONFLICT(id) DO UPDATE SET response = EXCLUDED.response
+RETURNING id, searchterm, response
+`
+
+type CacheAnimeSearchParams struct {
+	Searchterm string
+	Response   json.RawMessage
+}
+
+func (q *Queries) CacheAnimeSearch(ctx context.Context, arg CacheAnimeSearchParams) (Animesearchcache, error) {
+	row := q.db.QueryRowContext(ctx, cacheAnimeSearch, arg.Searchterm, arg.Response)
+	var i Animesearchcache
+	err := row.Scan(&i.ID, &i.Searchterm, &i.Response)
+	return i, err
+}
+
 const getCachedAnimeResult = `-- name: GetCachedAnimeResult :one
 SELECT response FROM animeResultCache WHERE id = $1
 `
 
 func (q *Queries) GetCachedAnimeResult(ctx context.Context, id int32) (json.RawMessage, error) {
 	row := q.db.QueryRowContext(ctx, getCachedAnimeResult, id)
+	var response json.RawMessage
+	err := row.Scan(&response)
+	return response, err
+}
+
+const getCachedAnimeSearchResult = `-- name: GetCachedAnimeSearchResult :one
+SELECT response FROM animeSearchCache WHERE searchTerm = $1
+`
+
+func (q *Queries) GetCachedAnimeSearchResult(ctx context.Context, searchterm string) (json.RawMessage, error) {
+	row := q.db.QueryRowContext(ctx, getCachedAnimeSearchResult, searchterm)
 	var response json.RawMessage
 	err := row.Scan(&response)
 	return response, err

@@ -1,5 +1,5 @@
 CREATE TABLE animeSearchCache (
-  id   BIGSERIAL PRIMARY KEY,
+  id   integer PRIMARY KEY,
   searchTerm text NOT NULL,
   response jsonb NOT NULL
 );

@@ -16,25 +16,25 @@ func TestMatchExactEpisodeMatch(t *testing.T) {
 		title           string
 		startingAnimeId int32
 		targetEps       int
-		expectedIds     []int
+		expectedIds     []int32
 	}{
 		{
 			"Attack on titan",
 			16498,
 			88,
-			[]int{16498, 20958, 99147, 104578, 110277, 131681, 146984},
+			[]int32{16498, 20958, 99147, 104578, 110277, 131681, 146984},
 		},
 		{
 			"Overlord",
 			20832,
 			52,
-			[]int{20832, 98437, 101474, 133844},
+			[]int32{20832, 98437, 101474, 133844},
 		},
 		{
 			"JoJo's Bizarre Adventure",
 			14719,
 			190,
-			[]int{14719, 20474, 20799, 21450, 102883, 131942, 146722},
+			[]int32{14719, 20474, 20799, 21450, 102883, 131942, 146722},
 		},
 	}
 
@@ -68,13 +68,13 @@ func TestMatchExactEpisodeMatchWithIncompleteSeason(t *testing.T) {
 		title           string
 		startingAnimeId int32
 		targetEps       int
-		expectedIds     []int
+		expectedIds     []int32
 	}{
 		{
 			"JoJo's Bizarre Adventure",
 			14719,
 			176,
-			[]int{14719, 20474, 20799, 21450, 102883, 131942, 146722},
+			[]int32{14719, 20474, 20799, 21450, 102883, 131942, 146722},
 		},
 	}
 

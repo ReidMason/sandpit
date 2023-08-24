@@ -1,16 +1,24 @@
 package main
 
 import (
+	"anime-list-matching/internal/anilist"
+	"anime-list-matching/internal/animeDb"
+	"anime-list-matching/internal/matcher"
+	"anime-list-matching/internal/migrations"
 	"anime-list-matching/internal/plex"
+	"context"
+	"database/sql"
 	"log"
 	"os"
 	"sync"
+
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 
 	"github.com/joho/godotenv"
 )
 
 type SeriesWithEps struct {
-	Episodes int // []plex.Episode
+	Episodes int
 	Series   plex.PlexSeries
 }
 
@@ -26,30 +34,37 @@ func main() {
 	plexAPI := plex.New(plexUrl, token)
 	series := getSeasonsWithEpisodes(plexAPI)
 
-	for _, s := range series {
-		log.Println(s.Series.Title, s.Episodes)
+	// Setup DB
+	connectionString := "postgres://user:password@localhost:5432/postgres?sslmode=disable"
+	db, err := sql.Open("postgres", connectionString)
+	if err != nil {
+		log.Panic("Failed to connect to database", err)
 	}
 
-	// connectionString := "postgres://user:password@localhost:5432/postgres?sslmode=disable"
-	// db, err := sql.Open("postgres", connectionString)
-	// if err != nil {
-	// 	log.Panic("Failed to connect to database", err)
-	// }
-	//
-	// migrations.ApplyMigrations(db)
-	//
-	// ctx := context.Background()
-	// queries := animeDb.New(db)
-	//
-	// targetEps := 88
-	// path, err := matcher.MatchAnime(16498, make([]anilist.Anime, 0), targetEps, queries, ctx)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	//
-	// log.Print("Done mathcing anime found:")
-	// matcher.PrintTraversalPath(path)
+	ctx := context.Background()
+	queries := animeDb.New(db)
 
+	migrations.ApplyMigrations(db)
+
+	// Match the series
+	for _, s := range series {
+		searchResults := anilist.SearchAnime(s.Series.Title, queries, ctx)
+		if len(searchResults) == 0 {
+			log.Println("FAILED: Failed to find search results for", s.Series.Title)
+			continue
+		}
+
+		result := searchResults[0]
+		path, err := matcher.MatchAnime(result.ID, make([]anilist.Anime, 0), s.Episodes, queries, ctx)
+		if err != nil {
+			log.Println(s.Series.Title, err)
+		}
+
+		if len(path) > 0 {
+			log.Println("SUCCESS: Found match for", s.Series.Title)
+		}
+		// matcher.PrintTraversalPath(path)
+	}
 }
 
 func getSeasonsWithEpisodes(plexAPI *plex.Plex) []SeriesWithEps {

@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"time"
 )
 
 type GraphqlBody[T any] struct {
@@ -35,7 +36,7 @@ func GetAnime(animeId int32, queries *animeDb.Queries, ctx context.Context) Anim
 		return anime
 	}
 
-	log.Println("Not found making request")
+	log.Printf("ID: %d Not found making request", animeId)
 
 	url := "https://graphql.anilist.co/"
 
@@ -111,6 +112,8 @@ func GetAnime(animeId int32, queries *animeDb.Queries, ctx context.Context) Anim
 		log.Fatal(err)
 	}
 
+	time.Sleep(1 * time.Second)
+
 	var data AnimeResponse
 	err = json.Unmarshal(jsonData, &data)
 	if err != nil {
@@ -146,7 +149,7 @@ func SearchAnime(searchTerm string, queries *animeDb.Queries, ctx context.Contex
 		return anime
 	}
 
-	log.Println("Anime search found making request")
+	log.Printf("Anime search not found making request %s", searchTerm)
 
 	url := "https://graphql.anilist.co/"
 
@@ -224,6 +227,8 @@ func SearchAnime(searchTerm string, queries *animeDb.Queries, ctx context.Contex
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	time.Sleep(1 * time.Second)
 
 	var data AnimeSearchResponse
 	err = json.Unmarshal(jsonData, &data)

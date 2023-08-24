@@ -7,7 +7,7 @@ type AnimeResponse struct {
 }
 
 type AnimeResult struct {
-	ID       int      `json:"id"`
+	ID       int32    `json:"id"`
 	Format   string   `json:"format"`
 	Episodes int      `json:"episodes"`
 	Synonyms []string `json:"synonyms"`
@@ -48,7 +48,7 @@ type AnimeResult struct {
 }
 
 type Anime struct {
-	ID       int      `json:"id"`
+	ID       int32    `json:"id"`
 	Format   string   `json:"format"`
 	Episodes int      `json:"episodes"`
 	Synonyms []string `json:"synonyms"`

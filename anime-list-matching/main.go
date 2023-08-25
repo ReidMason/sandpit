@@ -46,25 +46,30 @@ func main() {
 
 	migrations.ApplyMigrations(db)
 
+	matches := 0
 	// Match the series
 	for _, s := range series {
 		searchResults := anilist.SearchAnime(s.Series.Title, queries, ctx)
 		if len(searchResults) == 0 {
-			log.Println("FAILED: Failed to find search results for", s.Series.Title)
+			// log.Println("FAILED: Failed to find search results for", s.Series.Title)
 			continue
 		}
 
 		result := searchResults[0]
 		path, err := matcher.MatchAnime(result.ID, make([]anilist.Anime, 0), s.Episodes, queries, ctx)
 		if err != nil {
-			log.Println(s.Series.Title, err)
+			log.Println(s.Series.Title, s.Episodes, err)
 		}
 
 		if len(path) > 0 {
-			log.Println("SUCCESS: Found match for", s.Series.Title)
+			matches += 1
+			break
+			// log.Println("SUCCESS: Found match for", s.Series.Title)
 		}
 		// matcher.PrintTraversalPath(path)
 	}
+
+	log.Printf("Matched %d/%d", matches, len(series))
 }
 
 func getSeasonsWithEpisodes(plexAPI *plex.Plex) []SeriesWithEps {
@@ -80,6 +85,9 @@ func getSeasonsWithEpisodes(plexAPI *plex.Plex) []SeriesWithEps {
 			seasons := plexAPI.GetSeasons(series.RatingKey)
 			episodes := 0
 			for _, season := range seasons {
+				if season.Index == 0 {
+					continue
+				}
 				episodes += season.LeafCount
 			}
 			seriesWithEps = append(seriesWithEps, SeriesWithEps{

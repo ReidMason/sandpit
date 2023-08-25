@@ -51,23 +51,26 @@ func main() {
 	for _, s := range series {
 		searchResults := anilist.SearchAnime(s.Series.Title, queries, ctx)
 		if len(searchResults) == 0 {
-			// log.Println("FAILED: Failed to find search results for", s.Series.Title)
+			log.Println("FAILED: Failed to find search results for", s.Series.Title)
 			continue
 		}
 
+		var err error
 		for _, result := range searchResults {
 			path, err := matcher.MatchAnime(result.ID, make([]anilist.Anime, 0), s.Episodes, queries, ctx)
 			if err != nil {
-				log.Println(s.Series.Title, s.Episodes, err)
+				continue
 			}
 
 			if len(path) > 0 {
 				matches += 1
 				break
-				// log.Println("SUCCESS: Found match for", s.Series.Title)
 			}
 		}
-		// matcher.PrintTraversalPath(path)
+
+		if err != nil {
+			log.Println(s.Series.Title, s.Episodes, err)
+		}
 	}
 
 	log.Printf("Matched %d/%d", matches, len(series))

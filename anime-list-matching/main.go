@@ -55,16 +55,17 @@ func main() {
 			continue
 		}
 
-		result := searchResults[0]
-		path, err := matcher.MatchAnime(result.ID, make([]anilist.Anime, 0), s.Episodes, queries, ctx)
-		if err != nil {
-			log.Println(s.Series.Title, s.Episodes, err)
-		}
+		for _, result := range searchResults {
+			path, err := matcher.MatchAnime(result.ID, make([]anilist.Anime, 0), s.Episodes, queries, ctx)
+			if err != nil {
+				log.Println(s.Series.Title, s.Episodes, err)
+			}
 
-		if len(path) > 0 {
-			matches += 1
-			break
-			// log.Println("SUCCESS: Found match for", s.Series.Title)
+			if len(path) > 0 {
+				matches += 1
+				break
+				// log.Println("SUCCESS: Found match for", s.Series.Title)
+			}
 		}
 		// matcher.PrintTraversalPath(path)
 	}

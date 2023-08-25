@@ -22,7 +22,8 @@ func MatchAnime(animeId int32, path []anilist.Anime, targetEps int, queries *ani
 
 	path = append(path, anime)
 
-	if targetEps == calculateEpisodes(path) {
+	isContinuingSeries := anime.Status == anilist.Releasing && anime.Episodes == 0
+	if targetEps == calculateEpisodes(path) || isContinuingSeries {
 		return path, nil
 	}
 

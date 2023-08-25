@@ -101,3 +101,7 @@ const (
 	Compilation = "COMPILATION"
 	Contains    = "CONTAINS"
 )
+
+const (
+	Releasing = "RELEASING"
+)

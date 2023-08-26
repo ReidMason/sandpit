@@ -3,13 +3,13 @@ package main
 import (
 	"anime-list-matching/internal/anilist"
 	"anime-list-matching/internal/animeDb"
+	"anime-list-matching/internal/config"
 	"anime-list-matching/internal/matcher"
 	"anime-list-matching/internal/migrations"
 	"anime-list-matching/internal/plex"
 	"context"
 	"database/sql"
 	"log"
-	"os"
 	"sync"
 
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
@@ -28,8 +28,8 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	token := os.Getenv("PLEX_TOKEN")
-	plexUrl := os.Getenv("PLEX_URL")
+	token := config.GetPlexToken()
+	plexUrl := config.GetPlexURL()
 
 	plexAPI := plex.New(plexUrl, token)
 	series := getSeasonsWithEpisodes(plexAPI)

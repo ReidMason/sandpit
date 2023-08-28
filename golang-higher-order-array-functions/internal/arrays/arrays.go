@@ -11,7 +11,7 @@ func Filter[T any](arr []T, fn func(x T) bool) []T {
 	return res
 }
 
-func Map[T any, Y any](arr []T, fn func(x T) Y) []Y {
+func Map[T, Y any](arr []T, fn func(x T) Y) []Y {
 	res := make([]Y, 0, len(arr))
 	for _, x := range arr {
 		res = append(res, fn(x))

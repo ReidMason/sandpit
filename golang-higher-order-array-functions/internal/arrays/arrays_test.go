@@ -1,6 +1,7 @@
 package arrays
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -84,6 +85,36 @@ func TestFilterObjects(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		res := Filter(test.input, test.filter)
+
+		if len(res) != len(test.expected) {
+			t.Errorf("Wrong number of elements in array. Expected: %d found: %d", len(test.expected), len(res))
+		}
+
+		for i, expected := range test.expected {
+			result := res[i]
+			if expected != result {
+				t.Errorf("Wrong element found. Expected: '%s' found '%s'", result, expected)
+			}
+		}
+	}
+}
+
+func TestMap(t *testing.T) {
+	tests := []struct {
+		mutation func(x int32) string
+		input    []int32
+		expected []string
+	}{
+		{
+			func(x int32) string { return fmt.Sprint(x) },
+			[]int32{12345, 123, 125},
+			[]string{"12345", "123", "125"},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		res := Map(test.input, test.mutation)
 
 		if len(res) != len(test.expected) {
 			t.Errorf("Wrong number of elements in array. Expected: %d found: %d", len(test.expected), len(res))

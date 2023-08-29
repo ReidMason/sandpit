@@ -128,3 +128,36 @@ func TestMap(t *testing.T) {
 		}
 	}
 }
+
+func TestFirstOrDefault(t *testing.T) {
+	tests := []struct {
+		inputArr     []int32
+		defaultValue int32
+		expected     int32
+	}{
+		{
+			[]int32{12345, 123, 125},
+			0,
+			12345,
+		},
+		{
+			[]int32{},
+			0,
+			0,
+		},
+		{
+			[]int32{},
+			5,
+			5,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		res := FirstOrDefault(test.inputArr, test.defaultValue)
+
+		if res != test.expected {
+			t.Errorf("Wrong value returned. Expected: %d found: %d", test.expected, res)
+		}
+	}
+}

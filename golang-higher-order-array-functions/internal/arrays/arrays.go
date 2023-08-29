@@ -19,3 +19,11 @@ func Map[T, Y any](arr []T, fn func(x T) Y) []Y {
 
 	return res
 }
+
+func FirstOrDefault[T any](arr []T, defaultValue T) T {
+	if len(arr) > 0 {
+		return arr[0]
+	}
+
+	return defaultValue
+}

@@ -129,6 +129,36 @@ func TestMap(t *testing.T) {
 	}
 }
 
+func TestMapStringToString(t *testing.T) {
+	tests := []struct {
+		mutation func(x string) string
+		input    []string
+		expected []string
+	}{
+		{
+			func(x string) string { return x },
+			[]string{"12345", "123", "125"},
+			[]string{"12345", "123", "125"},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		res := Map(test.input, test.mutation)
+
+		if len(res) != len(test.expected) {
+			t.Errorf("Wrong number of elements in array. Expected: %d found: %d", len(test.expected), len(res))
+		}
+
+		for i, expected := range test.expected {
+			result := res[i]
+			if expected != result {
+				t.Errorf("Wrong element found. Expected: '%s' found '%s'", result, expected)
+			}
+		}
+	}
+}
+
 func TestFirstOrDefault(t *testing.T) {
 	tests := []struct {
 		inputArr     []int32
@@ -158,6 +188,49 @@ func TestFirstOrDefault(t *testing.T) {
 
 		if res != test.expected {
 			t.Errorf("Wrong value returned. Expected: %d found: %d", test.expected, res)
+		}
+	}
+}
+
+func TestSome(t *testing.T) {
+	tests := []struct {
+		inputArr   []int32
+		comparator func(x int32) bool
+		expected   bool
+	}{
+		{
+			[]int32{12345, 123, 125},
+			func(x int32) bool { return x == 12345 },
+			true,
+		},
+		{
+			[]int32{12345, 123, 125},
+			func(x int32) bool { return x == 123 },
+			true,
+		},
+		{
+			[]int32{},
+			func(x int32) bool { return x == 123 },
+			false,
+		},
+		{
+			[]int32{12345, 123, 125},
+			func(x int32) bool { return x == 10 },
+			false,
+		},
+		{
+			[]int32{12345, 123, 124},
+			func(x int32) bool { return x%2 == 0 },
+			true,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		res := Some(test.inputArr, test.comparator)
+
+		if res != test.expected {
+			t.Errorf("Wrong value returned. Expected: %t found: %t", test.expected, res)
 		}
 	}
 }

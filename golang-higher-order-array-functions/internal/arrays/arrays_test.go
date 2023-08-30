@@ -194,33 +194,33 @@ func TestFirstOrDefault(t *testing.T) {
 
 func TestSome(t *testing.T) {
 	tests := []struct {
-		inputArr   []int32
 		comparator func(x int32) bool
+		inputArr   []int32
 		expected   bool
 	}{
 		{
-			[]int32{12345, 123, 125},
 			func(x int32) bool { return x == 12345 },
-			true,
-		},
-		{
 			[]int32{12345, 123, 125},
-			func(x int32) bool { return x == 123 },
 			true,
 		},
 		{
+			func(x int32) bool { return x == 123 },
+			[]int32{12345, 123, 125},
+			true,
+		},
+		{
+			func(x int32) bool { return x == 123 },
 			[]int32{},
-			func(x int32) bool { return x == 123 },
 			false,
 		},
 		{
-			[]int32{12345, 123, 125},
 			func(x int32) bool { return x == 10 },
+			[]int32{12345, 123, 125},
 			false,
 		},
 		{
-			[]int32{12345, 123, 124},
 			func(x int32) bool { return x%2 == 0 },
+			[]int32{12345, 123, 124},
 			true,
 		},
 	}

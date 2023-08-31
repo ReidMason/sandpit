@@ -38,7 +38,16 @@ func Some[T any](arr []T, fn func(x T) bool) bool {
 	return false
 }
 
-// Every - Every element passes the lambda
+func Every[T any](arr []T, fn func(x T) bool) bool {
+	for _, x := range arr {
+		if !fn(x) {
+			return false
+		}
+	}
+
+	return true
+}
+
 // Find - Find element that passes the lambda
 // FindIndex - Find the index of the element that passes the lambda
 // Maybe the above two are merged

@@ -234,3 +234,41 @@ func TestSome(t *testing.T) {
 		}
 	}
 }
+
+func TestEvery(t *testing.T) {
+	tests := []struct {
+		comparator func(x int32) bool
+		inputArr   []int32
+		expected   bool
+	}{
+		{
+			func(x int32) bool { return x == 12345 },
+			[]int32{12345, 123, 125},
+			false,
+		},
+		{
+			func(x int32) bool { return x > 1 },
+			[]int32{12345, 123, 125},
+			true,
+		},
+		{
+			func(x int32) bool { return x > 9999 },
+			[]int32{12345, 123, 125},
+			false,
+		},
+		{
+			func(x int32) bool { return x == 10 },
+			[]int32{},
+			true,
+		},
+	}
+
+	for i, test := range tests {
+		test := test
+		res := Every(test.inputArr, test.comparator)
+
+		if res != test.expected {
+			t.Errorf("Wrong value returned for test %d. Expected: %t found: %t", i+1, test.expected, res)
+		}
+	}
+}

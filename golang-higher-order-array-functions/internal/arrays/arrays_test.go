@@ -272,3 +272,44 @@ func TestEvery(t *testing.T) {
 		}
 	}
 }
+
+func TestFind(t *testing.T) {
+	tests := []struct {
+		comparator func(x int32) bool
+		inputArr   []int32
+		expected   int32
+		errors     bool
+	}{
+		{
+			func(x int32) bool { return x == 12345 },
+			[]int32{12345, 123, 125},
+			12345,
+			false,
+		},
+		{
+			func(x int32) bool { return x > 99999 },
+			[]int32{12345, 123, 125},
+			0,
+			true,
+		},
+		{
+			func(x int32) bool { return x == 10 },
+			[]int32{},
+			0,
+			true,
+		},
+	}
+
+	for i, test := range tests {
+		test := test
+		res, err := Find(test.inputArr, test.comparator)
+
+		if (err != nil) != test.errors {
+			t.Fatalf("Wrong value returned for test %d. Expected: %d found: %d", i+1, test.expected, res)
+		}
+
+		if res != test.expected {
+			t.Fatalf("Wrong value returned for test %d. Expected: %d found: %d", i+1, test.expected, res)
+		}
+	}
+}

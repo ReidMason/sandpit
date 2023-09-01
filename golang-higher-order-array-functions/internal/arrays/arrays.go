@@ -1,5 +1,7 @@
 package arrays
 
+import "errors"
+
 func Filter[T any](arr []T, fn func(x T) bool) []T {
 	res := make([]T, 0)
 	for _, x := range arr {
@@ -48,7 +50,17 @@ func Every[T any](arr []T, fn func(x T) bool) bool {
 	return true
 }
 
-// Find - Find element that passes the lambda
+func Find[T any](arr []T, fn func(x T) bool) (T, error) {
+	for _, x := range arr {
+		if fn(x) {
+			return x, nil
+		}
+	}
+
+	var val T
+	return val, errors.New("Element not found")
+}
+
 // FindIndex - Find the index of the element that passes the lambda
 // Maybe the above two are merged
 // Sort - Sort the array maybe using a lambda?

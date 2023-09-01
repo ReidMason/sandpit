@@ -50,17 +50,15 @@ func Every[T any](arr []T, fn func(x T) bool) bool {
 	return true
 }
 
-func Find[T any](arr []T, fn func(x T) bool) (T, error) {
-	for _, x := range arr {
+func Find[T any](arr []T, fn func(x T) bool) (T, int, error) {
+	for i, x := range arr {
 		if fn(x) {
-			return x, nil
+			return x, i, nil
 		}
 	}
 
 	var val T
-	return val, errors.New("Element not found")
+	return val, -1, errors.New("Element not found")
 }
 
-// FindIndex - Find the index of the element that passes the lambda
-// Maybe the above two are merged
 // Sort - Sort the array maybe using a lambda?

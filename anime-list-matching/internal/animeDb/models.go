@@ -8,6 +8,12 @@ import (
 	"encoding/json"
 )
 
+type Animemapping struct {
+	ID           int32
+	Anilistid    int32
+	Plexseriesid string
+}
+
 type Animeresultcache struct {
 	ID       int32
 	Response json.RawMessage

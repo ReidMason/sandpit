@@ -75,3 +75,22 @@ func (q *Queries) GetCachedAnimeSearchResult(ctx context.Context, searchterm str
 	err := row.Scan(&response)
 	return response, err
 }
+
+const saveMapping = `-- name: SaveMapping :exec
+INSERT INTO animeMapping (
+  anilistId,
+  plexSeriesId
+) VALUES (
+  $1, $2
+)
+`
+
+type SaveMappingParams struct {
+	Anilistid    int32
+	Plexseriesid string
+}
+
+func (q *Queries) SaveMapping(ctx context.Context, arg SaveMappingParams) error {
+	_, err := q.db.ExecContext(ctx, saveMapping, arg.Anilistid, arg.Plexseriesid)
+	return err
+}

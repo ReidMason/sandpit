@@ -21,3 +21,11 @@ RETURNING *;
 
 -- name: GetCachedAnimeSearchResult :one
 SELECT response FROM animeSearchCache WHERE searchTerm = $1;
+
+-- name: SaveMapping :exec
+INSERT INTO animeMapping (
+  anilistId,
+  plexSeriesId
+) VALUES (
+  $1, $2
+);

@@ -18,8 +18,8 @@ import (
 )
 
 type SeriesWithEps struct {
-	Episodes int
 	Series   plex.PlexSeries
+	Episodes int
 }
 
 func main() {
@@ -32,10 +32,9 @@ func main() {
 	plexUrl := config.GetPlexURL()
 
 	plexAPI := plex.New(plexUrl, token)
-	series := getSeasonsWithEpisodes(plexAPI)
 
 	// Setup DB
-	connectionString := "postgres://user:password@localhost:5432/postgres?sslmode=disable"
+	connectionString := config.GetDBConnectionString()
 	db, err := sql.Open("postgres", connectionString)
 	if err != nil {
 		log.Panic("Failed to connect to database", err)
@@ -46,6 +45,20 @@ func main() {
 
 	migrations.ApplyMigrations(db)
 
+	// Finished setup
+	series := getSeasonsWithEpisodes(plexAPI)
+	createMatches(series, queries, ctx)
+
+	for _, s := range series {
+		findMappingForSeries(s, queries, ctx)
+	}
+}
+
+func findMappingForSeries(series SeriesWithEps, queries *animeDb.Queries, ctx context.Context) {
+
+}
+
+func createMatches(series []SeriesWithEps, queries *animeDb.Queries, ctx context.Context) {
 	matches := 0
 	// Match the series
 	for _, s := range series {
@@ -64,6 +77,12 @@ func main() {
 
 			if len(path) > 0 {
 				matches += 1
+				for _, p := range path {
+					queries.SaveMapping(ctx, animeDb.SaveMappingParams{
+						Anilistid:    p.ID,
+						Plexseriesid: s.Series.RatingKey,
+					})
+				}
 				break
 			}
 		}

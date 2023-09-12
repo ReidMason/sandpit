@@ -9,3 +9,7 @@ func GetPlexToken() string {
 func GetPlexURL() string {
 	return os.Getenv("PLEX_URL")
 }
+
+func GetDBConnectionString() string {
+	return os.Getenv("DB_CONNECTION_STRING")
+}

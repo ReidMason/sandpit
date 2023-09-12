@@ -14,27 +14,27 @@ import (
 func TestMatchExactEpisodeMatch(t *testing.T) {
 	tests := []struct {
 		title           string
+		expectedIds     []int32
 		startingAnimeId int32
 		targetEps       int
-		expectedIds     []int32
 	}{
 		{
 			"Attack on titan",
+			[]int32{16498, 20958, 99147, 104578, 110277, 131681, 146984},
 			16498,
 			88,
-			[]int32{16498, 20958, 99147, 104578, 110277, 131681, 146984},
 		},
 		{
 			"Overlord",
+			[]int32{20832, 98437, 101474, 133844},
 			20832,
 			52,
-			[]int32{20832, 98437, 101474, 133844},
 		},
 		{
 			"JoJo's Bizarre Adventure",
+			[]int32{14719, 20474, 20799, 21450, 102883, 131942, 146722},
 			14719,
 			190,
-			[]int32{14719, 20474, 20799, 21450, 102883, 131942, 146722},
 		},
 	}
 
@@ -51,7 +51,7 @@ func TestMatchExactEpisodeMatch(t *testing.T) {
 		test := test
 		res, err := MatchAnime(test.startingAnimeId, make([]anilist.Anime, 0), test.targetEps, queries, ctx)
 		if err != nil {
-			t.Errorf("Failed to find match for '%s'", test.title)
+			t.Errorf("Failed to find match for '%s'\n%v", test.title, err)
 		}
 
 		for i, r := range res {
@@ -66,15 +66,15 @@ func TestMatchExactEpisodeMatch(t *testing.T) {
 func TestMatchExactEpisodeMatchWithIncompleteSeason(t *testing.T) {
 	tests := []struct {
 		title           string
+		expectedIds     []int32
 		startingAnimeId int32
 		targetEps       int
-		expectedIds     []int32
 	}{
 		{
 			"JoJo's Bizarre Adventure",
+			[]int32{14719, 20474, 20799, 21450, 102883, 131942, 146722},
 			14719,
 			176,
-			[]int32{14719, 20474, 20799, 21450, 102883, 131942, 146722},
 		},
 	}
 
@@ -91,7 +91,7 @@ func TestMatchExactEpisodeMatchWithIncompleteSeason(t *testing.T) {
 		test := test
 		res, err := MatchAnime(test.startingAnimeId, make([]anilist.Anime, 0), test.targetEps, queries, ctx)
 		if err != nil {
-			t.Errorf("Failed to find match for '%s'", test.title)
+			t.Errorf("Failed to find match for '%s'\n%v", test.title, err)
 		}
 
 		for i, r := range res {

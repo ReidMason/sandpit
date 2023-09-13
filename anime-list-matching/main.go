@@ -54,8 +54,8 @@ func main() {
 	}
 }
 
-func findMappingForSeries(series SeriesWithEps, queries *animeDb.Queries, ctx context.Context) {
-
+func findMappingForSeries(series SeriesWithEps, queries *animeDb.Queries, ctx context.Context) ([]animeDb.Animemapping, error) {
+	return queries.GetMappings(ctx, series.Series.RatingKey)
 }
 
 func createMatches(series []SeriesWithEps, queries *animeDb.Queries, ctx context.Context) {

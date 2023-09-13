@@ -76,30 +76,11 @@ func (q *Queries) GetCachedAnimeSearchResult(ctx context.Context, searchterm str
 	return response, err
 }
 
-const saveMapping = `-- name: SaveMapping :exec
-INSERT INTO animeMapping (
-  anilistId,
-  plexSeriesId
-) VALUES (
-  $1, $2
-)
-`
-
-type SaveMappingParams struct {
-	Anilistid    int32
-	Plexseriesid string
-}
-
-func (q *Queries) SaveMapping(ctx context.Context, arg SaveMappingParams) error {
-	_, err := q.db.ExecContext(ctx, saveMapping, arg.Anilistid, arg.Plexseriesid)
-	return err
-}
-
-const getMappings = `-- name: getMappings :many
+const getMappings = `-- name: GetMappings :many
 SELECT id, anilistid, plexseriesid FROM animeMapping WHERE plexSeriesId = $1
 `
 
-func (q *Queries) getMappings(ctx context.Context, plexseriesid string) ([]Animemapping, error) {
+func (q *Queries) GetMappings(ctx context.Context, plexseriesid string) ([]Animemapping, error) {
 	rows, err := q.db.QueryContext(ctx, getMappings, plexseriesid)
 	if err != nil {
 		return nil, err
@@ -120,4 +101,23 @@ func (q *Queries) getMappings(ctx context.Context, plexseriesid string) ([]Anime
 		return nil, err
 	}
 	return items, nil
+}
+
+const saveMapping = `-- name: SaveMapping :exec
+INSERT INTO animeMapping (
+  anilistId,
+  plexSeriesId
+) VALUES (
+  $1, $2
+)
+`
+
+type SaveMappingParams struct {
+	Anilistid    int32
+	Plexseriesid string
+}
+
+func (q *Queries) SaveMapping(ctx context.Context, arg SaveMappingParams) error {
+	_, err := q.db.ExecContext(ctx, saveMapping, arg.Anilistid, arg.Plexseriesid)
+	return err
 }

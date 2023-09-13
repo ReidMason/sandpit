@@ -29,3 +29,6 @@ INSERT INTO animeMapping (
 ) VALUES (
   $1, $2
 );
+
+-- name: getMappings :many
+SELECT * FROM animeMapping WHERE plexSeriesId = $1;

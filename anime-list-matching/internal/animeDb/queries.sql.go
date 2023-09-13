@@ -94,3 +94,30 @@ func (q *Queries) SaveMapping(ctx context.Context, arg SaveMappingParams) error 
 	_, err := q.db.ExecContext(ctx, saveMapping, arg.Anilistid, arg.Plexseriesid)
 	return err
 }
+
+const getMappings = `-- name: getMappings :many
+SELECT id, anilistid, plexseriesid FROM animeMapping WHERE plexSeriesId = $1
+`
+
+func (q *Queries) getMappings(ctx context.Context, plexseriesid string) ([]Animemapping, error) {
+	rows, err := q.db.QueryContext(ctx, getMappings, plexseriesid)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Animemapping
+	for rows.Next() {
+		var i Animemapping
+		if err := rows.Scan(&i.ID, &i.Anilistid, &i.Plexseriesid); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

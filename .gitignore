@@ -2,3 +2,5 @@ client
 server
 rest_server
 .DS_store
+node_modules
+.pnpm

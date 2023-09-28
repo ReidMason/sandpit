@@ -5,3 +5,4 @@ rest_server
 node_modules
 .pnpm
 target
+sqlc/data/postgres

@@ -62,28 +62,14 @@ func (p *Parser) parseStatement() ast.Statement {
 func (p *Parser) parseTheresSatement() *ast.LetStatement {
 	statement := &ast.LetStatement{Token: token.Token{Type: "LET", Literal: "let"}}
 
-	if !p.expectPeek(token.THIS) {
-		return nil
-	}
-
-	if !p.expectPeek(token.MOVIE) {
-		return nil
-	}
-
-	if !p.expectPeek(token.CALLED) {
-		return nil
-	}
-
-	if !p.expectPeek(token.IDENT) {
-		return nil
+	path := [4]token.TokenType{token.THIS, token.MOVIE, token.CALLED, token.IDENT}
+	for _, tokenType := range path {
+		if !p.expectPeek(tokenType) {
+			return nil
+		}
 	}
 
 	statement.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
-
-	// // Skip expressions for now
-	// for !p.curTokenIs(token.SEMICOLON) {
-	// 	p.nextToken()
-	// }
 
 	return statement
 }

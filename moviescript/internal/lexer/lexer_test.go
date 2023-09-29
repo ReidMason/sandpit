@@ -6,7 +6,7 @@ import (
 )
 
 func TestNextToken(t *testing.T) {
-	input := `theres this movie called myObject`
+	input := `theres this movie called myObject which is 5`
 
 	tests := []struct {
 		expectedType    token.TokenType
@@ -17,6 +17,9 @@ func TestNextToken(t *testing.T) {
 		{token.MOVIE, "movie"},
 		{token.CALLED, "called"},
 		{token.IDENT, "myObject"},
+		{token.WHICH, "which"},
+		{token.IS, "is"},
+		{token.INT, "5"},
 	}
 
 	l := New(input)

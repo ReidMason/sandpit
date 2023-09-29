@@ -71,6 +71,27 @@ func (p *Parser) parseTheresSatement() *ast.LetStatement {
 
 	statement.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 
+	assignment := p.parseAssignment()
+	if assignment == nil {
+		return nil
+	}
+	statement.Value = assignment
+
+	return statement
+}
+
+func (p *Parser) parseAssignment() *ast.AssignmentStatement {
+	statement := &ast.AssignmentStatement{Token: token.Token{Type: "EQUALS", Literal: "equals"}}
+
+	path := [3]token.TokenType{token.WHICH, token.IS, token.INT}
+	for _, tokenType := range path {
+		if !p.expectPeek(tokenType) {
+			return nil
+		}
+	}
+
+	statement.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+
 	return statement
 }
 

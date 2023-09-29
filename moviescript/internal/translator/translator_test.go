@@ -7,7 +7,7 @@ import (
 )
 
 func TestLetStatements(t *testing.T) {
-	input := `theres this movie called myObject`
+	input := `theres this movie called myObject which is 5`
 
 	l := lexer.New(input)
 	p := parser.New(l)
@@ -15,7 +15,7 @@ func TestLetStatements(t *testing.T) {
 	program := p.ParseProgram()
 
 	output := Translate(program)
-	expected := "let myObject"
+	expected := "let myObject = 5"
 
 	if output != expected {
 		t.Fatalf("Output mismatch. Expected '%s' got '%s'", expected, output)

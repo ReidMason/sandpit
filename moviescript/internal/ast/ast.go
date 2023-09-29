@@ -10,6 +10,14 @@ type Identifier struct {
 	Value string
 }
 
+func (i *Identifier) expressionNode() {}
+func (i *Identifier) TokenLiteral() string {
+	return i.Token.Literal
+}
+func (i *Identifier) String() string {
+	return i.Value
+}
+
 type Node interface {
 	TokenLiteral() string
 	String() string
@@ -45,13 +53,29 @@ func (ls *LetStatement) String() string {
 	out.WriteString(ls.TokenLiteral() + " ")
 	out.WriteString(ls.Name.String())
 
+	if ls.Value != nil {
+		out.WriteString(ls.Value.String())
+	}
+
 	return out.String()
 }
 
-func (i *Identifier) expressionNode() {}
-func (i *Identifier) TokenLiteral() string {
-	return i.Token.Literal
+type AssignmentStatement struct {
+	Token token.Token
+	Name  *Identifier
+	Value Expression
 }
-func (i *Identifier) String() string {
-	return i.Value
+
+func (as *AssignmentStatement) StatementNode()  {}
+func (as *AssignmentStatement) expressionNode() {}
+func (as *AssignmentStatement) TokenLiteral() string {
+	return as.Token.Literal
+}
+func (as *AssignmentStatement) String() string {
+	var out bytes.Buffer
+
+	out.WriteString(" = ")
+	out.WriteString(as.Name.Value)
+
+	return out.String()
 }

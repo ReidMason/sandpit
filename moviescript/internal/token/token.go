@@ -12,6 +12,9 @@ const (
 	THIS    = "this"
 	MOVIE   = "movie"
 	CALLED  = "called"
+	WHICH   = "which"
+	IS      = "is"
+	INT     = "INT"
 	EOF     = "EOF"
 	ILLEGAL = "ILLEGAL"
 	IDENT   = "IDENT"
@@ -22,6 +25,8 @@ var keywords = map[string]TokenType{
 	"this":   THIS,
 	"movie":  MOVIE,
 	"called": CALLED,
+	"which":  WHICH,
+	"is":     IS,
 }
 
 func LookupIndent(ident string) TokenType {

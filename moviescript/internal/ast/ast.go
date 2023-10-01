@@ -10,7 +10,6 @@ type Identifier struct {
 	Value string
 }
 
-func (i *Identifier) expressionNode() {}
 func (i *Identifier) TokenLiteral() string {
 	return i.Token.Literal
 }
@@ -25,12 +24,10 @@ type Node interface {
 
 type Statement interface {
 	Node
-	StatementNode()
 }
 
 type Expression interface {
 	Node
-	expressionNode()
 }
 
 type Program struct {
@@ -43,7 +40,6 @@ type LetStatement struct {
 	Value Expression
 }
 
-func (ls *LetStatement) StatementNode() {}
 func (ls *LetStatement) TokenLiteral() string {
 	return ls.Token.Literal
 }
@@ -66,8 +62,6 @@ type AssignmentStatement struct {
 	Value Expression
 }
 
-func (as *AssignmentStatement) StatementNode()  {}
-func (as *AssignmentStatement) expressionNode() {}
 func (as *AssignmentStatement) TokenLiteral() string {
 	return as.Token.Literal
 }

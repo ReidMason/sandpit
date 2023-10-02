@@ -66,21 +66,24 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 	case tea.WindowSizeMsg:
-		width := msg.Width / 2
+		offset := 2
+		width := msg.Width/2 - offset
 		height := 10
 
 		if !m.ready {
 			m.lviewport = viewport.New(width, height)
 			m.lviewport.YPosition = 10
-			m.lviewport.SetContent(fmt.Sprint(msg.Width))
+			m.lviewport.SetContent(m.ldiff)
 
 			m.rviewport = viewport.New(width, height)
 			m.rviewport.YPosition = 10
 			m.rviewport.SetContent(m.rdiff)
 
+			columnStyle.Width(width)
 			m.ready = true
 		} else {
-			m.lviewport.SetContent(fmt.Sprint(msg.Width))
+			columnStyle.Width(width)
+
 			m.lviewport.Width = width
 			m.lviewport.Height = height
 
@@ -103,6 +106,9 @@ func (m model) View() string {
 	// The header
 	s := "Git diff\n\n"
 
-	mainBody := lipgloss.JoinHorizontal(lipgloss.Left, m.lviewport.View(), m.rviewport.View())
+	leftView := columnStyle.Render(m.lviewport.View())
+	rightView := columnStyle.Render(m.rviewport.View())
+
+	mainBody := lipgloss.JoinHorizontal(lipgloss.Left, leftView, rightView)
 	return fmt.Sprintf("%s%s", s, mainBody)
 }

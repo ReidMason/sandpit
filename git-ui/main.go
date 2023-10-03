@@ -29,8 +29,15 @@ type model struct {
 }
 
 func main() {
+	if len(os.Args) < 2 {
+		fmt.Println("Please provide a filepath")
+		return
+	}
+
+	filepath := os.Args[1]
+
 	p := tea.NewProgram(
-		initialModel(),
+		initialModel(filepath),
 		tea.WithAltScreen(),       // use the full size of the terminal in its "alternate screen buffer"
 		tea.WithMouseCellMotion(), // turn on mouse support so we can track the mouse wheel
 	)
@@ -78,8 +85,8 @@ func styleDiff(diff []git.DiffLine, width int) string {
 	return diffString
 }
 
-func initialModel() model {
-	rawDiff := git.GetRawDiff()
+func initialModel(filepath string) model {
+	rawDiff := git.GetRawDiff(filepath)
 	diff := git.GetDiff(rawDiff)
 
 	return model{

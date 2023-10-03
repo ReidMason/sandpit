@@ -95,8 +95,8 @@ func trimFirstRune(s string) (rune, string) {
 	return r, s[i:]
 }
 
-func GetRawDiff() string {
-	cmd := exec.Command("git", "diff", "--no-prefix", "-U1000", "main.go")
+func GetRawDiff(filepath string) string {
+	cmd := exec.Command("git", "diff", "--no-prefix", "-U1000", filepath)
 
 	var out bytes.Buffer
 	cmd.Stdout = &out

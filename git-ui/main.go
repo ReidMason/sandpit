@@ -12,20 +12,17 @@ import (
 
 var (
 	columnStyle = lipgloss.NewStyle().
-			Padding(1, 2).
+			PaddingRight(0).
 			Border(lipgloss.RoundedBorder()).
 			BorderForeground(lipgloss.Color("62"))
 
-	additionStyle = lipgloss.NewStyle().
-			Background(lipgloss.Color("#3f534f"))
-
-	removalStyle = lipgloss.NewStyle().
-			Background(lipgloss.Color("#6f2e2d"))
+	greyOutStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#4b5161"))
 )
 
 type model struct {
-	ldiff     string
-	rdiff     string
+	ldiff     []git.DiffLine
+	rdiff     []git.DiffLine
 	lviewport viewport.Model
 	rviewport viewport.Model
 	ready     bool
@@ -44,33 +41,50 @@ func main() {
 	}
 }
 
+func styleLine(line git.DiffLine, width int) string {
+	lineString := line.Content[:min(width-12, len(line.Content))]
+
+	additionStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color("#3f534f")).
+		Width(width)
+
+	removalStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color("#6f2e2d")).
+		Width(width)
+
+	blankStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color("#31343b")).
+		Width(width)
+
+	if line.Type == git.Removal {
+		lineString = removalStyle.Render(lineString)
+	} else if line.Type == git.Addition {
+		lineString = additionStyle.Render(lineString)
+	} else if line.Type == git.Blank {
+		lineString = blankStyle.Render(lineString)
+	}
+
+	return lineString
+}
+
+func styleDiff(diff []git.DiffLine, width int) string {
+	diffString := ""
+	for i, line := range diff {
+		lineNumber := fmt.Sprint(i+1) + "│"
+		lineNumberLength := len(lineNumber)
+		diffString += greyOutStyle.Render(lineNumber) + styleLine(line, width-lineNumberLength) + "\n"
+	}
+
+	return diffString
+}
+
 func initialModel() model {
 	rawDiff := git.GetRawDiff()
 	diff := git.GetDiff(rawDiff)
 
-	ldiff := ""
-	for _, line := range diff.Diff1 {
-		lineString := line.Content + "\n"
-		if line.Type == git.Removal {
-			ldiff += removalStyle.Render(lineString)
-		} else {
-			ldiff += lineString
-		}
-	}
-
-	rdiff := ""
-	for _, line := range diff.Diff2 {
-		lineString := line.Content + "\n"
-		if line.Type == git.Addition {
-			rdiff += additionStyle.Render(lineString)
-		} else {
-			rdiff += lineString
-		}
-	}
-
 	return model{
-		ldiff: ldiff,
-		rdiff: rdiff,
+		ldiff: diff.Diff1,
+		rdiff: diff.Diff2,
 		ready: false,
 	}
 }
@@ -98,21 +112,31 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		offset := 2
 		width := msg.Width/2 - offset
+		lineWidth := width - columnStyle.GetHorizontalPadding()
 		height := 20
 
 		if !m.ready {
 			m.lviewport = viewport.New(width, height)
 			m.lviewport.YPosition = 10
-			m.lviewport.SetContent(m.ldiff)
+			ldiff := styleDiff(m.ldiff, lineWidth)
+			m.lviewport.SetContent(ldiff)
 
 			m.rviewport = viewport.New(width, height)
 			m.rviewport.YPosition = 10
-			m.rviewport.SetContent(m.rdiff)
+
+			rdiff := styleDiff(m.rdiff, lineWidth)
+			m.rviewport.SetContent(rdiff)
 
 			columnStyle.Width(width)
 			m.ready = true
 		} else {
 			columnStyle.Width(width)
+
+			ldiff := styleDiff(m.ldiff, lineWidth)
+			m.lviewport.SetContent(ldiff)
+
+			rdiff := styleDiff(m.rdiff, lineWidth)
+			m.rviewport.SetContent(rdiff)
 
 			m.lviewport.Width = width
 			m.lviewport.Height = height

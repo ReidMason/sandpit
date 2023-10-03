@@ -12,9 +12,13 @@ import (
 
 var (
 	columnStyle = lipgloss.NewStyle().
-			PaddingRight(0).
 			Border(lipgloss.RoundedBorder()).
 			BorderForeground(lipgloss.Color("62"))
+
+	headerStyle = lipgloss.NewStyle().
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(lipgloss.Color("62")).
+			Align(lipgloss.Position(0.5))
 
 	greyOutStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color("#4b5161"))
@@ -25,6 +29,7 @@ type model struct {
 	rdiff     []git.DiffLine
 	lviewport viewport.Model
 	rviewport viewport.Model
+	width     int
 	ready     bool
 }
 
@@ -78,8 +83,7 @@ func styleDiff(diff []git.DiffLine, width int) string {
 	diffString := ""
 	for i, line := range diff {
 		lineNumber := fmt.Sprint(i+1) + "│"
-		lineNumberLength := len(lineNumber)
-		diffString += greyOutStyle.Render(lineNumber) + styleLine(line, width-lineNumberLength) + "\n"
+		diffString += greyOutStyle.Render(lineNumber) + styleLine(line, width) + "\n"
 	}
 
 	return diffString
@@ -118,9 +122,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.WindowSizeMsg:
 		offset := 2
-		width := msg.Width/2 - offset
+		m.width = msg.Width
+		width := m.width/2 - offset
 		lineWidth := width - columnStyle.GetHorizontalPadding()
-		height := 20
+		height := msg.Height - columnStyle.GetVerticalPadding() - 5
 
 		if !m.ready {
 			m.lviewport = viewport.New(width, height)
@@ -138,6 +143,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.ready = true
 		} else {
 			columnStyle.Width(width)
+			columnStyle.Height(height)
 
 			ldiff := styleDiff(m.ldiff, lineWidth)
 			m.lviewport.SetContent(ldiff)
@@ -165,11 +171,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m model) View() string {
 	// The header
-	s := "Git diff\n\n"
+	headerStyle1 := headerStyle.Width(m.width - 2)
+	header := headerStyle1.Render("Git diff")
 
 	leftView := columnStyle.Render(m.lviewport.View())
 	rightView := columnStyle.Render(m.rviewport.View())
 
 	mainBody := lipgloss.JoinHorizontal(lipgloss.Left, leftView, rightView)
-	return fmt.Sprintf("%s%s", s, mainBody)
+
+	return lipgloss.JoinVertical(lipgloss.Left, header, mainBody)
 }

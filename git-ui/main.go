@@ -96,7 +96,8 @@ func styleDiff(diff []git.DiffLine, width int) string {
 		isBlank := line.Type == git.Blank
 		lineNumber := strings.Repeat(" ", lineNumberPadding)
 		if !isBlank {
-			lineNumber = strings.Repeat(" ", lineNumberPadding-len(fmt.Sprint(count)))
+			lengthOfCurrentNumber := len(fmt.Sprint(count))
+			lineNumber = strings.Repeat(" ", lineNumberPadding-lengthOfCurrentNumber)
 			lineNumber += fmt.Sprint(count)
 			count++
 		}

@@ -81,8 +81,16 @@ func styleLine(line git.DiffLine, width int) string {
 
 func styleDiff(diff []git.DiffLine, width int) string {
 	diffString := ""
-	for i, line := range diff {
-		lineNumber := fmt.Sprint(i+1) + "│"
+	count := 1
+	for _, line := range diff {
+		isBlank := line.Type == git.Blank
+		lineNumber := " "
+		if !isBlank {
+			lineNumber = fmt.Sprint(count)
+			count++
+		}
+		lineNumber += "│"
+
 		diffString += greyOutStyle.Render(lineNumber) + styleLine(line, width) + "\n"
 	}
 

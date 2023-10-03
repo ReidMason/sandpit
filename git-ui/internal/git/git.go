@@ -14,6 +14,7 @@ const (
 	Removal DiffType = iota
 	Addition
 	Neutral
+	Blank
 )
 
 type Diff struct {
@@ -46,27 +47,25 @@ func GetDiff(diffString string) Diff {
 
 		letter, lineString := trimFirstRune(line)
 		if letter == '-' {
-			diffLine := DiffLine{Content: lineString, Type: Removal}
+			diffLine := DiffLine{Content: lineString + "", Type: Removal}
 			diff.Diff1 = append(diff.Diff1, diffLine)
 			removals++
 		} else if letter == '+' {
-			diffLine := DiffLine{Content: lineString, Type: Addition}
+			diffLine := DiffLine{Content: lineString + "", Type: Addition}
 			diff.Diff2 = append(diff.Diff2, diffLine)
 			if removals > 0 {
 				removals--
-			}
-
-			if removals == 0 {
+			} else if removals == 0 {
 				additions++
 			}
 		} else {
-			diffLine := DiffLine{Content: "", Type: Removal}
+			diffLine := DiffLine{Content: "", Type: Blank}
 			for i := 0; i < removals; i++ {
 				diff.Diff2 = append(diff.Diff2, diffLine)
 			}
 			removals = 0
 
-			diffLine = DiffLine{Content: "", Type: Removal}
+			diffLine = DiffLine{Content: "", Type: Blank}
 			for i := 0; i < additions; i++ {
 				diff.Diff1 = append(diff.Diff1, diffLine)
 			}
@@ -78,12 +77,12 @@ func GetDiff(diffString string) Diff {
 		}
 	}
 
-	diffLine := DiffLine{Content: "", Type: Removal}
+	diffLine := DiffLine{Content: "", Type: Blank}
 	for i := 0; i < removals; i++ {
 		diff.Diff2 = append(diff.Diff2, diffLine)
 	}
 
-	diffLine = DiffLine{Content: "", Type: Addition}
+	diffLine = DiffLine{Content: "", Type: Blank}
 	for i := 0; i < additions; i++ {
 		diff.Diff1 = append(diff.Diff1, diffLine)
 	}
@@ -97,7 +96,7 @@ func trimFirstRune(s string) (rune, string) {
 }
 
 func GetRawDiff() string {
-	cmd := exec.Command("git", "diff", "--no-prefix", "-U1000", "testfile.txt")
+	cmd := exec.Command("git", "diff", "--no-prefix", "-U1000", "main.go")
 
 	var out bytes.Buffer
 	cmd.Stdout = &out
@@ -107,5 +106,5 @@ func GetRawDiff() string {
 		log.Fatal("Failed to get git diff")
 	}
 
-	return out.String()
+	return strings.ReplaceAll(out.String(), "\t", "   ")
 }

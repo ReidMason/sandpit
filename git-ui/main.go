@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"git-ui/internal/git"
 	"os"
 
 	"github.com/charmbracelet/bubbles/viewport"
@@ -38,9 +39,22 @@ func main() {
 }
 
 func initialModel() model {
+	rawDiff := git.GetRawDiff()
+	diff := git.GetDiff(rawDiff)
+
+	ldiff := ""
+	for _, line := range diff.Diff1 {
+		ldiff += line.Content + "\n"
+	}
+
+	rdiff := ""
+	for _, line := range diff.Diff2 {
+		rdiff += line.Content + "\n"
+	}
+
 	return model{
-		ldiff: "LEFT\nThis was the original\nNewlines\nEverything really\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10",
-		rdiff: "RIGHT\nThis is the changed one\nNewlines\nEverything really with changes\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10",
+		ldiff: ldiff,
+		rdiff: rdiff,
 		ready: false,
 	}
 }
@@ -68,7 +82,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		offset := 2
 		width := msg.Width/2 - offset
-		height := 10
+		height := 20
 
 		if !m.ready {
 			m.lviewport = viewport.New(width, height)

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"git-ui/internal/git"
 	"os"
+	"strings"
 
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
@@ -82,11 +83,21 @@ func styleLine(line git.DiffLine, width int) string {
 func styleDiff(diff []git.DiffLine, width int) string {
 	diffString := ""
 	count := 1
+
+	numberOfLines := 0
+	for _, line := range diff {
+		if line.Type != git.Blank {
+			numberOfLines++
+		}
+	}
+	lineNumberPadding := len(fmt.Sprint(numberOfLines))
+
 	for _, line := range diff {
 		isBlank := line.Type == git.Blank
-		lineNumber := " "
+		lineNumber := strings.Repeat(" ", lineNumberPadding)
 		if !isBlank {
-			lineNumber = fmt.Sprint(count)
+			lineNumber = strings.Repeat(" ", lineNumberPadding-len(fmt.Sprint(count)))
+			lineNumber += fmt.Sprint(count)
 			count++
 		}
 		lineNumber += "│"
@@ -167,7 +178,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	// Handle keyboard and mouse events in the viewport
 	m.lviewport, cmd = m.lviewport.Update(msg)
 	cmds = append(cmds, cmd)
 
@@ -178,9 +188,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-	// The header
-	headerStyle1 := headerStyle.Width(m.width - 2)
-	header := headerStyle1.Render("Git diff")
+	headerStlying := headerStyle.Width(m.width - 2)
+	header := headerStlying.Render("Git diff")
 
 	leftView := columnStyle.Render(m.lviewport.View())
 	rightView := columnStyle.Render(m.rviewport.View())

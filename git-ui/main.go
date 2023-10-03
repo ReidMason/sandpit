@@ -12,9 +12,15 @@ import (
 
 var (
 	columnStyle = lipgloss.NewStyle().
-		Padding(1, 2).
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("62"))
+			Padding(1, 2).
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(lipgloss.Color("62"))
+
+	additionStyle = lipgloss.NewStyle().
+			Background(lipgloss.Color("#3f534f"))
+
+	removalStyle = lipgloss.NewStyle().
+			Background(lipgloss.Color("#6f2e2d"))
 )
 
 type model struct {
@@ -44,12 +50,22 @@ func initialModel() model {
 
 	ldiff := ""
 	for _, line := range diff.Diff1 {
-		ldiff += line.Content + "\n"
+		lineString := line.Content + "\n"
+		if line.Type == git.Removal {
+			ldiff += removalStyle.Render(lineString)
+		} else {
+			ldiff += lineString
+		}
 	}
 
 	rdiff := ""
 	for _, line := range diff.Diff2 {
-		rdiff += line.Content + "\n"
+		lineString := line.Content + "\n"
+		if line.Type == git.Addition {
+			rdiff += additionStyle.Render(lineString)
+		} else {
+			rdiff += lineString
+		}
 	}
 
 	return model{

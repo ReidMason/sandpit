@@ -8,6 +8,14 @@ import (
 	"unicode/utf8"
 )
 
+type DiffType int8
+
+const (
+	Removal DiffType = iota
+	Addition
+	Neutral
+)
+
 type Diff struct {
 	Diff1 []DiffLine
 	Diff2 []DiffLine
@@ -15,6 +23,7 @@ type Diff struct {
 
 type DiffLine struct {
 	Content string
+	Type    DiffType
 }
 
 func GetDiff(diffString string) Diff {
@@ -25,7 +34,6 @@ func GetDiff(diffString string) Diff {
 	start := false
 	removals := 0
 	additions := 0
-	diffLineBlank := DiffLine{Content: ""}
 	for _, line := range lines {
 		if strings.HasPrefix(line, "@@") && strings.HasSuffix(line, "@@") {
 			start = true
@@ -37,12 +45,12 @@ func GetDiff(diffString string) Diff {
 		}
 
 		letter, lineString := trimFirstRune(line)
-		diffLine := DiffLine{Content: lineString}
-
 		if letter == '-' {
-			removals++
+			diffLine := DiffLine{Content: lineString, Type: Removal}
 			diff.Diff1 = append(diff.Diff1, diffLine)
+			removals++
 		} else if letter == '+' {
+			diffLine := DiffLine{Content: lineString, Type: Addition}
 			diff.Diff2 = append(diff.Diff2, diffLine)
 			if removals > 0 {
 				removals--
@@ -52,27 +60,32 @@ func GetDiff(diffString string) Diff {
 				additions++
 			}
 		} else {
+			diffLine := DiffLine{Content: "", Type: Removal}
 			for i := 0; i < removals; i++ {
-				diff.Diff2 = append(diff.Diff2, diffLineBlank)
+				diff.Diff2 = append(diff.Diff2, diffLine)
 			}
 			removals = 0
 
+			diffLine = DiffLine{Content: "", Type: Removal}
 			for i := 0; i < additions; i++ {
-				diff.Diff1 = append(diff.Diff1, diffLineBlank)
+				diff.Diff1 = append(diff.Diff1, diffLine)
 			}
 			additions = 0
 
+			diffLine = DiffLine{Content: lineString, Type: Neutral}
 			diff.Diff1 = append(diff.Diff1, diffLine)
 			diff.Diff2 = append(diff.Diff2, diffLine)
 		}
 	}
 
+	diffLine := DiffLine{Content: "", Type: Removal}
 	for i := 0; i < removals; i++ {
-		diff.Diff2 = append(diff.Diff2, diffLineBlank)
+		diff.Diff2 = append(diff.Diff2, diffLine)
 	}
 
+	diffLine = DiffLine{Content: "", Type: Addition}
 	for i := 0; i < additions; i++ {
-		diff.Diff1 = append(diff.Diff1, diffLineBlank)
+		diff.Diff1 = append(diff.Diff1, diffLine)
 	}
 
 	return diff

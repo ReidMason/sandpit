@@ -6,14 +6,65 @@ import (
 )
 
 const (
-	Empty = iota
-	Water
-	Grass
-	Sand
-	Forest
+	North = iota
+	South
+	East
+	West
 )
 
-type TileType int
+type Direction int
+
+const (
+	Empty       = "Empty"
+	Water       = "Water"
+	WaterSandTL = "Water to Sand Top Left"
+	WaterSandTR = "Water to Sand Top Right"
+	WaterSandBR = "Water to Sand Bottom Right"
+	WaterSandBL = "Water to Sand Bottom Left"
+	WaterSandN  = "Water to Sand North"
+	WaterSandE  = "Water to Sand East"
+	WaterSandS  = "Water to Sand South"
+	WaterSandW  = "Water to Sand West"
+	Grass       = "Grass"
+	Sand        = "Sand"
+	Forest      = "Forest"
+)
+
+const DiagonalGradient = "from-40% to-50%"
+const VerticalGradient = "from-80%"
+
+func getStyle(tileType TileType) string {
+	switch tileType {
+	case Water:
+		return "bg-blue-400"
+	case WaterSandTL:
+		return fmt.Sprintf("bg-gradient-to-tl from-blue-400 %s to-orange-200", DiagonalGradient)
+	case WaterSandTR:
+		return fmt.Sprintf("bg-gradient-to-tr from-blue-400 %s to-orange-200", DiagonalGradient)
+	case WaterSandBR:
+		return fmt.Sprintf("bg-gradient-to-br from-blue-400 %s to-orange-200", DiagonalGradient)
+	case WaterSandBL:
+		return fmt.Sprintf("bg-gradient-to-bl from-blue-400 %s to-orange-200", DiagonalGradient)
+	case WaterSandN:
+		return fmt.Sprintf("bg-gradient-to-t from-blue-400 %s to-orange-200", VerticalGradient)
+	case WaterSandE:
+		return fmt.Sprintf("bg-gradient-to-r from-blue-400 %s to-orange-200", VerticalGradient)
+	case WaterSandS:
+		return fmt.Sprintf("bg-gradient-to-b from-blue-400 %s to-orange-200", VerticalGradient)
+	case WaterSandW:
+		return fmt.Sprintf("bg-gradient-to-l from-blue-400 %s to-orange-200", VerticalGradient)
+	case Grass:
+		return "bg-green-200"
+	case Sand:
+		return "bg-orange-200"
+	case Forest:
+		return "bg-green-500"
+	default:
+		return "bg-slate-100"
+	}
+}
+
+type TileType string
 
 type Tile struct {
 	north         *Tile
@@ -26,7 +77,18 @@ type Tile struct {
 }
 
 func NewTile() *Tile {
-	possibilities := []TileType{Water, Grass, Sand, Forest}
+	possibilities := []TileType{
+		Water,
+		// WaterSandTL,
+		// WaterSandTR,
+		// WaterSandBR,
+		// WaterSandBL,
+		// WaterSandN,
+		// WaterSandS,
+		Grass,
+		Sand,
+		Forest,
+	}
 	return &Tile{
 		possibilities: possibilities,
 		entropy:       len(possibilities),
@@ -43,11 +105,50 @@ func (t *Tile) collapse() {
 	t.possibilities = []TileType{t.tileType}
 	t.entropy = 0
 
-	possibilities := t.getPossibilities()
-	t.north.constrain(possibilities)
-	t.east.constrain(possibilities)
-	t.south.constrain(possibilities)
-	t.west.constrain(possibilities)
+	t.north.constrain(t, North)
+	t.east.constrain(t, East)
+	t.south.constrain(t, South)
+	t.west.constrain(t, West)
+}
+
+func findPossibleConnectors(tileType TileType, direction Direction) []TileType {
+	foundConnectors := make([]TileType, 0)
+	for _, constraint := range TileConstraints {
+		opposite := constraint.north
+		if direction == North {
+			opposite = constraint.south
+		} else if direction == South {
+			opposite = constraint.north
+		} else if direction == East {
+			opposite = constraint.west
+		} else if direction == West {
+			opposite = constraint.east
+		}
+
+		if opposite == tileType {
+			foundConnectors = append(foundConnectors, constraint.tileType)
+			continue
+		}
+
+		if tileType != constraint.tileType {
+			continue
+		}
+
+		directionType := constraint.north
+		if direction == North {
+			directionType = constraint.north
+		} else if direction == South {
+			directionType = constraint.south
+		} else if direction == East {
+			directionType = constraint.east
+		} else if direction == West {
+			directionType = constraint.west
+		}
+
+		foundConnectors = append(foundConnectors, directionType)
+	}
+
+	return foundConnectors
 }
 
 func (t Tile) getPossibilities() map[TileType]bool {
@@ -59,41 +160,39 @@ func (t Tile) getPossibilities() map[TileType]bool {
 	return possibilities
 }
 
-func (t *Tile) constrain(neighbourPossibilities map[TileType]bool) {
+func (t *Tile) constrain(neighbour *Tile, direction Direction) {
 	if t == nil || t.entropy <= 0 {
 		return
 	}
 
-	_, hasWater := neighbourPossibilities[Water]
-	_, hasGrass := neighbourPossibilities[Grass]
-	_, hasSand := neighbourPossibilities[Sand]
-	_, hasForest := neighbourPossibilities[Forest]
+	newPossibilities := make([]TileType, 0)
+	neighbourPossibilities := neighbour.getPossibilities()
+	for _, possibility := range t.possibilities {
+		connectors := findPossibleConnectors(possibility, direction)
 
-	if !hasWater && !hasGrass && !hasSand {
-		t.possibilities = t.filterPossibilties(Sand)
+		valid := false
+		for _, connector := range connectors {
+			_, found := neighbourPossibilities[connector]
+			if found {
+				valid = true
+				break
+			}
+		}
+
+		if valid {
+			newPossibilities = append(newPossibilities, possibility)
+		}
 	}
 
-	if !hasGrass && !hasForest {
-		t.possibilities = t.filterPossibilties(Forest)
-	}
-
-	if !hasSand && !hasForest && !hasGrass {
-		t.possibilities = t.filterPossibilties(Grass)
-	}
-
-	if !hasSand && !hasWater {
-		t.possibilities = t.filterPossibilties(Water)
-	}
-
-	constrained := len(t.possibilities) != t.entropy
-	t.entropy = len(t.possibilities)
+	constrained := len(newPossibilities) != t.entropy
+	t.entropy = len(newPossibilities)
+	t.possibilities = newPossibilities
 
 	if constrained {
-		possibilities := t.getPossibilities()
-		t.north.constrain(possibilities)
-		t.east.constrain(possibilities)
-		t.south.constrain(possibilities)
-		t.west.constrain(possibilities)
+		t.north.constrain(t, North)
+		t.east.constrain(t, East)
+		t.south.constrain(t, South)
+		t.west.constrain(t, West)
 	}
 }
 

@@ -60,10 +60,11 @@ func sendStuff() {
 	for {
 		if ws != nil {
 			if boardData == nil {
-				boardData = board.New(200)
+				boardData = board.New(100)
 			}
 
 			data := boardData.Display()
+			// boardData.Iter()
 			for boardData.Iter() {
 
 			}

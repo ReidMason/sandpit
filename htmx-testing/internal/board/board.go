@@ -49,19 +49,8 @@ func (b Board) Display() [][]TileDisplay {
 	for _, row := range b.tiles {
 		displayRow := make([]TileDisplay, 0, b.size)
 		for _, tile := range row {
-			style := "bg-slate-100"
-			if tile.tileType == Water {
-				style = "bg-blue-400"
-			} else if tile.tileType == Sand {
-				style = "bg-orange-200"
-			} else if tile.tileType == Grass {
-				style = "bg-green-200"
-			} else if tile.tileType == Forest {
-				style = "bg-green-500"
-			}
-
 			displayRow = append(displayRow, TileDisplay{
-				Style: style,
+				Style: getStyle(tile.tileType),
 				// Content: fmt.Sprint(tile.entropy),
 				// Content: strings.Join(Map(tile.possibilities,
 				// func(x TileType) string { return fmt.Sprint(x) }), "-"),

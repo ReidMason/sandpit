@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"log"
+	"math/rand"
 	"net/http"
 	"strconv"
 	"text/template"
@@ -57,11 +58,24 @@ func setInterval(w http.ResponseWriter, r *http.Request) {
 func sendStuff() {
 	for {
 		if ws != nil {
+			size := 50
+			data := make([][]string, 0, size)
+			for i := 0; i < size; i++ {
+				childArr := make([]string, 0, size)
+				for j := 0; j < size; j++ {
+					childArr = append(childArr, "bg-red-500")
+				}
+				data = append(data, childArr)
+			}
+
+			insert := "bg-red-500 bg-gradient-to-br from-indigo-500"
+			x, y := rand.Intn(size), rand.Intn(size)
+			data[x][y] = insert
+
 			templ := template.Must(template.ParseFiles("templates/time.html"))
 			w := bytes.NewBuffer(make([]byte, 0))
 
-			currentTime := time.Now()
-			err := templ.Execute(w, struct{ Time string }{Time: currentTime.String()})
+			err := templ.Execute(w, struct{ Data [][]string }{Data: data})
 			if err != nil {
 				log.Println(err)
 			}

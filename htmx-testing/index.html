@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="css/style.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
     <script
       src="https://unpkg.com/htmx.org@1.9.4"
       integrity="sha384-zUfuhFKKZCbHTY6aRR46gxiqszMk5tcHjsVFxnUo8VMus4kHGVdIYVbOYYNlKmHV"
@@ -13,7 +14,11 @@
     <script src="https://unpkg.com/htmx.org/dist/ext/ws.js"></script>
   </head>
   <body>
-    <div hx-ext="ws" ws-connect="/socket">
+    <div
+      hx-ext="ws"
+      ws-connect="/socket"
+      class="flex h-screen items-center justify-center"
+    >
       <div id="time" hx-swap-oob="afterbegin"></div>
     </div>
   </body>

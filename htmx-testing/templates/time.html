@@ -1,1 +1,9 @@
-<div id="time">{{.Time}}</div>
+<div id="time">
+  {{ range .Data }}
+  <div class="flex">
+    {{ range . }}
+    <p class="h-5 w-5 {{.}}"></p>
+    {{ end }}
+  </div>
+  {{end}}
+</div>

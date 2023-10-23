@@ -22,9 +22,9 @@ var interval = 1000
 var ws *websocket.Conn
 
 type Todo struct {
+	Title     string
 	id        int
 	userId    int
-	Title     string
 	completed bool
 }
 
@@ -61,7 +61,7 @@ func sendStuff() {
 	for {
 		if ws != nil {
 			if boardData == nil {
-				r := rand.New(rand.NewSource(1))
+				r := rand.New(rand.NewSource(time.Now().UnixNano()))
 				boardData = board.New(100, *r)
 			}
 

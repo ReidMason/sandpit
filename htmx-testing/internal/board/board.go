@@ -1,13 +1,14 @@
 package board
 
 import (
+	"fmt"
 	"math/rand"
 )
 
 type Board struct {
+	r     rand.Rand
 	tiles [][]*Tile
 	size  int
-	r     rand.Rand
 }
 
 func New(size int, r rand.Rand) *Board {
@@ -51,8 +52,8 @@ func (b Board) Display() [][]TileDisplay {
 		displayRow := make([]TileDisplay, 0, b.size)
 		for _, tile := range row {
 			displayRow = append(displayRow, TileDisplay{
-				Style: getStyle(tile.tileType),
-				// Content: fmt.Sprint(tile.entropy),
+				Style:   getStyle(tile.tileType),
+				Content: fmt.Sprint(tile.entropy),
 				// Content: strings.Join(Map(tile.possibilities,
 				// func(x TileType) string { return fmt.Sprint(x) }), "-"),
 			})

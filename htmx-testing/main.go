@@ -60,7 +60,7 @@ func sendStuff() {
 	for {
 		if ws != nil {
 			if boardData == nil {
-				boardData = board.New(100)
+				boardData = board.New(300)
 			}
 
 			data := boardData.Display()
@@ -81,6 +81,7 @@ func sendStuff() {
 			}
 
 			ws.WriteMessage(1, w.Bytes())
+			ws.Close()
 		}
 		time.Sleep(time.Millisecond * time.Duration(interval))
 	}

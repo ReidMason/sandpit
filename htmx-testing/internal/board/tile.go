@@ -114,23 +114,7 @@ func (t *Tile) collapse() {
 func findPossibleConnectors(tileType TileType, direction Direction) []TileType {
 	foundConnectors := make([]TileType, 0)
 	for _, constraint := range TileConstraints {
-		opposite := constraint.north
-		if direction == North {
-			opposite = constraint.south
-		} else if direction == South {
-			opposite = constraint.north
-		} else if direction == East {
-			opposite = constraint.west
-		} else if direction == West {
-			opposite = constraint.east
-		}
-
-		if opposite == tileType {
-			foundConnectors = append(foundConnectors, constraint.tileType)
-			continue
-		}
-
-		if tileType != constraint.tileType {
+		if constraint.tileType != tileType {
 			continue
 		}
 
@@ -145,19 +129,10 @@ func findPossibleConnectors(tileType TileType, direction Direction) []TileType {
 			directionType = constraint.west
 		}
 
-		foundConnectors = append(foundConnectors, directionType)
+		foundConnectors = append(foundConnectors, directionType...)
 	}
 
 	return foundConnectors
-}
-
-func (t Tile) getPossibilities() map[TileType]bool {
-	possibilities := make(map[TileType]bool)
-	for _, p := range t.possibilities {
-		possibilities[p] = true
-	}
-
-	return possibilities
 }
 
 func (t *Tile) constrain(neighbour *Tile, direction Direction) {
@@ -165,21 +140,19 @@ func (t *Tile) constrain(neighbour *Tile, direction Direction) {
 		return
 	}
 
-	newPossibilities := make([]TileType, 0)
-	neighbourPossibilities := neighbour.getPossibilities()
-	for _, possibility := range t.possibilities {
-		connectors := findPossibleConnectors(possibility, direction)
-
-		valid := false
-		for _, connector := range connectors {
-			_, found := neighbourPossibilities[connector]
-			if found {
-				valid = true
-				break
-			}
+	neighbourPossibilities := neighbour.possibilities
+	connectors := make(map[TileType]bool)
+	for _, possibility := range neighbourPossibilities {
+		possibleConnectors := findPossibleConnectors(possibility, direction)
+		for _, connector := range possibleConnectors {
+			connectors[connector] = true
 		}
+	}
 
-		if valid {
+	newPossibilities := make([]TileType, 0)
+	for _, possibility := range t.possibilities {
+		_, found := connectors[possibility]
+		if found {
 			newPossibilities = append(newPossibilities, possibility)
 		}
 	}

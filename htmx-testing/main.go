@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"htmx-testing/internal/board"
 	"log"
+	"math/rand"
 	"net/http"
 	"strconv"
 	"text/template"
@@ -60,7 +61,8 @@ func sendStuff() {
 	for {
 		if ws != nil {
 			if boardData == nil {
-				boardData = board.New(300)
+				r := rand.New(rand.NewSource(1))
+				boardData = board.New(100, *r)
 			}
 
 			data := boardData.Display()

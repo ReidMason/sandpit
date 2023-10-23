@@ -74,9 +74,10 @@ type Tile struct {
 	tileType      TileType
 	possibilities []TileType
 	entropy       int
+	r             rand.Rand
 }
 
-func NewTile() *Tile {
+func NewTile(r rand.Rand) *Tile {
 	possibilities := []TileType{
 		Water,
 		// WaterSandTL,
@@ -92,6 +93,7 @@ func NewTile() *Tile {
 	return &Tile{
 		possibilities: possibilities,
 		entropy:       len(possibilities),
+		r:             r,
 	}
 }
 
@@ -100,7 +102,7 @@ func (t Tile) display() string {
 }
 
 func (t *Tile) collapse() {
-	idx := rand.Intn(len(t.possibilities))
+	idx := t.r.Intn(len(t.possibilities))
 	t.tileType = t.possibilities[idx]
 	t.possibilities = []TileType{t.tileType}
 	t.entropy = 0

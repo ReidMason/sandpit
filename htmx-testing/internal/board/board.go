@@ -7,15 +7,16 @@ import (
 type Board struct {
 	tiles [][]*Tile
 	size  int
+	r     rand.Rand
 }
 
-func New(size int) *Board {
+func New(size int, r rand.Rand) *Board {
 	// Init the tiles
 	tiles := make([][]*Tile, 0, size)
 	for i := 0; i < size; i++ {
 		childArr := make([]*Tile, 0, size)
 		for i := 0; i < size; i++ {
-			childArr = append(childArr, NewTile())
+			childArr = append(childArr, NewTile(r))
 		}
 		tiles = append(tiles, childArr)
 	}
@@ -41,7 +42,7 @@ func New(size int) *Board {
 		}
 	}
 
-	return &Board{tiles: tiles, size: size}
+	return &Board{tiles: tiles, size: size, r: r}
 }
 
 func (b Board) Display() [][]TileDisplay {
@@ -89,7 +90,7 @@ func (b *Board) Iter() bool {
 		return false
 	}
 
-	idx := rand.Intn(len(lowestTiles))
+	idx := b.r.Intn(len(lowestTiles))
 	randomTile := lowestTiles[idx]
 	randomTile.collapse()
 

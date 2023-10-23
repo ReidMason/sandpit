@@ -9,10 +9,10 @@ type TileConstraint struct {
 
 var TileConstraints = map[TileType]map[Direction][]TileType{
 	Sand: {
-		North: []TileType{Sand, Grass, WaterSandN},
-		East:  []TileType{Sand, Grass, WaterSandE},
-		South: []TileType{Sand, Grass, WaterSandS},
-		West:  []TileType{Sand, Grass, WaterSandW},
+		North: []TileType{Sand, Grass, WaterSandN, WaterSandTL, WaterSandTR},
+		East:  []TileType{Sand, Grass, WaterSandE, WaterSandTR, WaterSandBR},
+		South: []TileType{Sand, Grass, WaterSandS, WaterSandBL, WaterSandBR},
+		West:  []TileType{Sand, Grass, WaterSandW, WaterSandTL, WaterSandBL},
 	},
 	Grass: {
 		North: []TileType{Grass, Sand, Forest},

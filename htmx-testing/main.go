@@ -68,7 +68,6 @@ func sendStuff() {
 			data := boardData.Display()
 			// boardData.Iter()
 			for boardData.Iter() {
-
 			}
 			// for i := 0; i < 5; i++ {
 			// 	boardData.Iter()

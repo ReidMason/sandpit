@@ -1,7 +1,6 @@
 package board
 
 import (
-	"fmt"
 	"math/rand"
 )
 
@@ -52,8 +51,8 @@ func (b Board) Display() [][]TileDisplay {
 		displayRow := make([]TileDisplay, 0, b.size)
 		for _, tile := range row {
 			displayRow = append(displayRow, TileDisplay{
-				Style:   getStyle(tile.tileType),
-				Content: fmt.Sprint(tile.entropy),
+				Style: getStyle(tile.tileType),
+				// Content: fmt.Sprint(tile.entropy),
 				// Content: strings.Join(Map(tile.possibilities,
 				// func(x TileType) string { return fmt.Sprint(x) }), "-"),
 			})

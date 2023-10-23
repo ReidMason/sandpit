@@ -30,35 +30,35 @@ const (
 	Forest      = "Forest"
 )
 
-const DiagonalGradient = "from-40% to-50%"
+const DiagonalGradient = "from-50%"
 const VerticalGradient = ""
 
 func getStyle(tileType TileType) string {
 	switch tileType {
 	case Water:
 		return "bg-blue-400"
-	case WaterSandTL:
-		return fmt.Sprintf("bg-gradient-to-tl from-red-400 %s to-purple-200", DiagonalGradient)
-	case WaterSandTR:
-		return fmt.Sprintf("bg-gradient-to-tr from-red-400 %s to-purple-200", DiagonalGradient)
-	case WaterSandBR:
-		return fmt.Sprintf("bg-gradient-to-br from-red-400 %s to-purple-200", DiagonalGradient)
-	case WaterSandBL:
-		return fmt.Sprintf("bg-gradient-to-bl from-red-400 %s to-purple-200", DiagonalGradient)
-	case WaterSandN:
-		return fmt.Sprintf("bg-gradient-to-t from-red-400 %s to-purple-200", VerticalGradient)
-	case WaterSandE:
-		return fmt.Sprintf("bg-gradient-to-r from-red-400 %s to-purple-200", VerticalGradient)
-	case WaterSandS:
-		return fmt.Sprintf("bg-gradient-to-b from-red-400 %s to-purple-200", VerticalGradient)
-	case WaterSandW:
-		return fmt.Sprintf("bg-gradient-to-l from-red-400 %s to-purple-200", VerticalGradient)
 	case Grass:
 		return "bg-green-200"
 	case Sand:
 		return "bg-orange-200"
 	case Forest:
 		return "bg-green-500"
+	case WaterSandTL:
+		return fmt.Sprintf("bg-gradient-to-tl from-orange-200 %s to-blue-400", DiagonalGradient)
+	case WaterSandTR:
+		return fmt.Sprintf("bg-gradient-to-tr from-orange-200 %s to-blue-400", DiagonalGradient)
+	case WaterSandBR:
+		return fmt.Sprintf("bg-gradient-to-br from-orange-200 %s to-blue-400", DiagonalGradient)
+	case WaterSandBL:
+		return fmt.Sprintf("bg-gradient-to-bl from-orange-200 %s to-blue-400", DiagonalGradient)
+	case WaterSandN:
+		return fmt.Sprintf("bg-gradient-to-t from-orange-200 %s to-blue-400", VerticalGradient)
+	case WaterSandE:
+		return fmt.Sprintf("bg-gradient-to-r from-orange-200 %s to-blue-400", VerticalGradient)
+	case WaterSandS:
+		return fmt.Sprintf("bg-gradient-to-b from-orange-200 %s to-blue-400", VerticalGradient)
+	case WaterSandW:
+		return fmt.Sprintf("bg-gradient-to-l from-orange-200 %s to-blue-400", VerticalGradient)
 	default:
 		return "bg-slate-100"
 	}
@@ -82,7 +82,13 @@ func NewTile(r rand.Rand) *Tile {
 	possibilities := []TileType{
 		Water,
 		WaterSandN,
+		WaterSandE,
 		WaterSandS,
+		WaterSandW,
+		WaterSandBL,
+		WaterSandBR,
+		WaterSandTL,
+		WaterSandTR,
 		Grass,
 		Sand,
 		Forest,

@@ -10,9 +10,9 @@ type TileConstraint struct {
 var TileConstraints = map[TileType]map[Direction][]TileType{
 	Sand: {
 		North: []TileType{Sand, Grass, WaterSandN},
-		East:  []TileType{Sand, Grass, Water},
+		East:  []TileType{Sand, Grass, WaterSandE},
 		South: []TileType{Sand, Grass, WaterSandS},
-		West:  []TileType{Sand, Grass, Water},
+		West:  []TileType{Sand, Grass, WaterSandW},
 	},
 	Grass: {
 		North: []TileType{Grass, Sand, Forest},
@@ -28,27 +28,56 @@ var TileConstraints = map[TileType]map[Direction][]TileType{
 	},
 	Water: {
 		North: []TileType{Water, WaterSandS},
-		East:  []TileType{Water, Sand},
+		East:  []TileType{Water, WaterSandW},
 		South: []TileType{Water, WaterSandN},
-		West:  []TileType{Water, Sand},
+		West:  []TileType{Water, WaterSandE},
 	},
 	WaterSandN: {
 		North: []TileType{Water},
-		East:  []TileType{Water, Sand, WaterSandN},
+		East:  []TileType{WaterSandN, WaterSandTL},
 		South: []TileType{Sand},
-		West:  []TileType{Water, Sand, WaterSandN},
+		West:  []TileType{WaterSandN, WaterSandTR},
 	},
 	WaterSandS: {
 		North: []TileType{Sand},
-		East:  []TileType{Water, Sand, WaterSandS},
+		East:  []TileType{WaterSandS, WaterSandBL},
 		South: []TileType{Water},
-		West:  []TileType{Water, Sand, WaterSandS},
+		West:  []TileType{WaterSandS, WaterSandBR},
 	},
-	WaterSandE: {},
-	WaterSandW: {},
-
-	// WaterSandTL = "Water to Sand Top Left"
-	// WaterSandTR = "Water to Sand Top Right"
-	// WaterSandBR = "Water to Sand Bottom Right"
-	// WaterSandBL = "Water to Sand Bottom Left"
+	WaterSandE: {
+		North: []TileType{WaterSandE, WaterSandBR},
+		East:  []TileType{Water},
+		South: []TileType{WaterSandE, WaterSandTR},
+		West:  []TileType{Sand},
+	},
+	WaterSandW: {
+		North: []TileType{WaterSandW, WaterSandBL},
+		East:  []TileType{Sand},
+		South: []TileType{WaterSandW, WaterSandTL},
+		West:  []TileType{Water},
+	},
+	WaterSandTL: {
+		North: []TileType{WaterSandW},
+		East:  []TileType{Sand},
+		South: []TileType{Sand},
+		West:  []TileType{WaterSandN},
+	},
+	WaterSandTR: {
+		North: []TileType{WaterSandE},
+		East:  []TileType{WaterSandN},
+		South: []TileType{Sand},
+		West:  []TileType{Sand},
+	},
+	WaterSandBR: {
+		North: []TileType{Sand},
+		East:  []TileType{WaterSandS},
+		South: []TileType{WaterSandE},
+		West:  []TileType{Sand},
+	},
+	WaterSandBL: {
+		North: []TileType{Sand},
+		East:  []TileType{Sand},
+		South: []TileType{WaterSandW},
+		West:  []TileType{WaterSandS},
+	},
 }

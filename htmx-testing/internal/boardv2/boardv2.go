@@ -1,23 +1,24 @@
 package boardv2
 
 import (
-	"fmt"
 	"htmx-testing/internal/cell"
+	"htmx-testing/internal/tile"
 	"math/rand"
 )
 
 type Board struct {
+	r     *rand.Rand
 	cells [][]*cell.Cell
 	size  int
-	r     *rand.Rand
 }
 
 func New(size int, r *rand.Rand) *Board {
+	allTiles := tile.GetAllTiles()
 	cells := make([][]*cell.Cell, 0, size)
 	for i := 0; i < size; i++ {
 		childArr := make([]*cell.Cell, 0, size)
 		for i := 0; i < size; i++ {
-			childArr = append(childArr, cell.New(r))
+			childArr = append(childArr, cell.New(r, allTiles))
 		}
 		cells = append(cells, childArr)
 	}
@@ -52,8 +53,8 @@ func (b Board) Display() [][]TileDisplay {
 		displayRow := make([]TileDisplay, 0, b.size)
 		for _, cell := range row {
 			displayRow = append(displayRow, TileDisplay{
-				Style:   cell.Tile.Style,
-				Content: fmt.Sprint(cell.Entropy()),
+				Style: cell.Tile.Style,
+				// Content: fmt.Sprint(cell.Entropy()),
 				// Content: strings.Join(Map(tile.possibilities,
 				// func(x TileType) string { return fmt.Sprint(x) }), "-"),
 			})

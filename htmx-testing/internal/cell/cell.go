@@ -18,7 +18,7 @@ type Cell struct {
 	collapsed     bool
 }
 
-func New(r *rand.Rand) *Cell {
+func New(r *rand.Rand, possibilities []tile.Tile) *Cell {
 
 	cell := Cell{
 		Tile:      tile.Blank,
@@ -26,7 +26,7 @@ func New(r *rand.Rand) *Cell {
 		r:         r,
 	}
 
-	cell.setPossibilities(tile.GetAllTiles())
+	cell.setPossibilities(possibilities)
 
 	return &cell
 }

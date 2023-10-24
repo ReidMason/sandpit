@@ -58,26 +58,66 @@ func GetAllTiles() []Tile {
 	waterSand := Tile{
 		Sockets: [4]socket.Socket{
 			socket.WaterT,
-			socket.WaterSandR,
+			socket.WaterSandE,
 			socket.SandT,
-			socket.WaterSandL,
+			socket.WaterSandW,
 		},
 		Style: "bg-gradient-to-t from-orange-200 to-blue-400",
 	}
 
 	waterCorner := Tile{
 		Sockets: [4]socket.Socket{
-			socket.WaterSandDR,
+			socket.WaterSandCornerN,
 			socket.SandT,
 			socket.SandT,
-			socket.WaterSandDL,
+			socket.WaterSandCornerW,
 		},
 		Style: "bg-gradient-to-tl from-orange-200 from-50% to-blue-400",
 	}
 
+	sandCorner := Tile{
+		Sockets: [4]socket.Socket{
+			socket.SandWaterCornerN,
+			socket.WaterT,
+			socket.WaterT,
+			socket.SandWaterCornerW,
+		},
+		Style: "bg-gradient-to-tl from-blue-400 from-50% to-orange-200",
+	}
+
+	// sandGrass := Tile{
+	// 	Sockets: [4]socket.Socket{
+	// 		socket.SandT,
+	// 		socket.SandGrassE,
+	// 		socket.GrassT,
+	// 		socket.SandGrassW,
+	// 	},
+	// 	Style: "bg-gradient-to-t from-green-200 to-orange-200",
+	// }
+
+	// sandGrassCorner := Tile{
+	// 	Sockets: [4]socket.Socket{
+	// 		socket.SandGrassW,
+	// 		socket.GrassT,
+	// 		socket.GrassT,
+	// 		socket.SandGrassE,
+	// 	},
+	// 	Style: "bg-gradient-to-tl from-green-200 from-50% to-orange-400",
+	// }
+
+	// sandCorner := Tile{
+	// 	Sockets: [4]socket.Socket{
+	// 		socket.WaterSandDL,
+	// 		socket.WaterT,
+	// 		socket.WaterT,
+	// 		socket.WaterSandDR,
+	// 	},
+	// 	Style: "bg-gradient-to-tl from-blue-400 from-50% to-orange-200",
+	// }
+
 	tiles := []Tile{grass, forest, sand, water}
 
-	rotatableTiles := []Tile{waterSand, waterCorner}
+	rotatableTiles := []Tile{waterSand, waterCorner, sandCorner} //, sandGrass} //, sandGrassCorner}
 	for _, tile := range rotatableTiles {
 		for i := 0; i < 4; i++ {
 			tiles = append(tiles, rotate(tile, i))

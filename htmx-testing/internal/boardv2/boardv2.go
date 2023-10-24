@@ -1,7 +1,6 @@
 package boardv2
 
 import (
-	"fmt"
 	"htmx-testing/internal/cell"
 	"htmx-testing/internal/tile"
 	"math/rand"
@@ -54,8 +53,8 @@ func (b Board) Display() [][]TileDisplay {
 		displayRow := make([]TileDisplay, 0, b.size)
 		for _, cell := range row {
 			displayRow = append(displayRow, TileDisplay{
-				Style:   cell.Tile.Style,
-				Content: fmt.Sprint(cell.Entropy()),
+				Style: cell.Tile.Style,
+				// Content: fmt.Sprint(cell.Entropy()),
 				// Content: strings.Join(Map(tile.possibilities,
 				// func(x TileType) string { return fmt.Sprint(x) }), "-"),
 			})

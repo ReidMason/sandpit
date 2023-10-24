@@ -63,15 +63,13 @@ func sendStuff() {
 			if boardData == nil {
 				r := rand.New(rand.NewSource(time.Now().UnixNano()))
 				boardData = boardv2.New(100, r)
+				// go doWork(boardData)
+				// for boardData.Iter() {
+				// }
 			}
 
 			data := boardData.Display()
-			// boardData.Iter()
-			for boardData.Iter() {
-			}
-			// for i := 0; i < 5; i++ {
-			// 	boardData.Iter()
-			// }
+			boardData.Iter()
 
 			templ := template.Must(template.ParseFiles("templates/time.html"))
 			w := bytes.NewBuffer(make([]byte, 0))
@@ -82,9 +80,14 @@ func sendStuff() {
 			}
 
 			ws.WriteMessage(1, w.Bytes())
-			ws.Close()
 		}
 		time.Sleep(time.Millisecond * time.Duration(interval))
+	}
+}
+
+func doWork(boardData *boardv2.Board) {
+	for boardData.Iter() {
+		time.Sleep(time.Millisecond * 10)
 	}
 }
 

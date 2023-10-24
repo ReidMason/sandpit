@@ -2,7 +2,6 @@ package tile
 
 import (
 	"htmx-testing/internal/socket"
-	"log"
 	"strings"
 )
 
@@ -12,11 +11,10 @@ type Tile struct {
 }
 
 var Blank = Tile{
-	Style: "bg-slate-100",
+	Style: "bg-slate-500",
 }
 
 func GetAllTiles() []Tile {
-	log.Println("HERE")
 	grass := Tile{
 		Sockets: [4]socket.Socket{
 			socket.Grass,

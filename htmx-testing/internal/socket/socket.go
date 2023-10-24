@@ -14,30 +14,36 @@ const (
 
 	WaterSandW
 	WaterSandE
-
 	WaterSandCornerN
 	WaterSandCornerW
-
 	SandWaterCornerN
 	SandWaterCornerW
 
 	SandGrassW
 	SandGrassE
+	SandGrassCornerN
+	SandGrassCornerW
+	GrassSandCornerN
+	GrassSandCornerW
 )
 
 var SocketConstraints = map[Socket]map[Socket]bool{
-	Grass:  {Grass: true, Forest: true, Sand: true},
+	Grass:  {Grass: true, Forest: true, GrassT: true},
 	Forest: {Forest: true, Grass: true},
 	Water:  {Water: true, WaterT: true},
-	Sand:   {Sand: true, SandT: true, Grass: true},
+	Sand:   {Sand: true, SandT: true},
 
-	WaterSandW: {WaterSandE: true},
-
+	WaterSandW:       {WaterSandE: true},
 	WaterSandCornerN: {WaterSandW: true},
 	WaterSandCornerW: {WaterSandE: true},
-
 	SandWaterCornerN: {WaterSandE: true},
 	SandWaterCornerW: {WaterSandW: true},
+
+	SandGrassW:       {SandGrassE: true},
+	SandGrassCornerN: {SandGrassW: true},
+	SandGrassCornerW: {SandGrassE: true},
+	GrassSandCornerN: {SandGrassE: true},
+	GrassSandCornerW: {SandGrassW: true},
 }
 
 func CanConnect(socket1, socket2 Socket) bool {

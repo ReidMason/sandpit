@@ -64,8 +64,8 @@ func sendStuff() {
 				r := rand.New(rand.NewSource(time.Now().UnixNano()))
 				boardData = boardv2.New(100, r)
 				// go doWork(boardData)
-				// for boardData.Iter() {
-				// }
+				for boardData.Iter() {
+				}
 			}
 
 			data := boardData.Display()

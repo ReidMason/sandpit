@@ -65,7 +65,7 @@ func GetAllTiles() []Tile {
 		Style: "bg-gradient-to-t from-orange-200 to-blue-400",
 	}
 
-	waterCorner := Tile{
+	waterSandCorner := Tile{
 		Sockets: [4]socket.Socket{
 			socket.WaterSandCornerN,
 			socket.SandT,
@@ -75,7 +75,7 @@ func GetAllTiles() []Tile {
 		Style: "bg-gradient-to-tl from-orange-200 from-50% to-blue-400",
 	}
 
-	sandCorner := Tile{
+	sandWaterCorner := Tile{
 		Sockets: [4]socket.Socket{
 			socket.SandWaterCornerN,
 			socket.WaterT,
@@ -85,39 +85,39 @@ func GetAllTiles() []Tile {
 		Style: "bg-gradient-to-tl from-blue-400 from-50% to-orange-200",
 	}
 
-	// sandGrass := Tile{
-	// 	Sockets: [4]socket.Socket{
-	// 		socket.SandT,
-	// 		socket.SandGrassE,
-	// 		socket.GrassT,
-	// 		socket.SandGrassW,
-	// 	},
-	// 	Style: "bg-gradient-to-t from-green-200 to-orange-200",
-	// }
+	sandGrass := Tile{
+		Sockets: [4]socket.Socket{
+			socket.SandT,
+			socket.SandGrassE,
+			socket.GrassT,
+			socket.SandGrassW,
+		},
+		Style: "bg-gradient-to-t from-green-200 to-orange-200",
+	}
 
-	// sandGrassCorner := Tile{
-	// 	Sockets: [4]socket.Socket{
-	// 		socket.SandGrassW,
-	// 		socket.GrassT,
-	// 		socket.GrassT,
-	// 		socket.SandGrassE,
-	// 	},
-	// 	Style: "bg-gradient-to-tl from-green-200 from-50% to-orange-400",
-	// }
+	sandGrassCorner := Tile{
+		Sockets: [4]socket.Socket{
+			socket.SandGrassCornerN,
+			socket.GrassT,
+			socket.GrassT,
+			socket.SandGrassCornerW,
+		},
+		Style: "bg-gradient-to-tl from-green-200 from-50% to-orange-200",
+	}
 
-	// sandCorner := Tile{
-	// 	Sockets: [4]socket.Socket{
-	// 		socket.WaterSandDL,
-	// 		socket.WaterT,
-	// 		socket.WaterT,
-	// 		socket.WaterSandDR,
-	// 	},
-	// 	Style: "bg-gradient-to-tl from-blue-400 from-50% to-orange-200",
-	// }
+	grassSandCorner := Tile{
+		Sockets: [4]socket.Socket{
+			socket.GrassSandCornerN,
+			socket.SandT,
+			socket.SandT,
+			socket.GrassSandCornerW,
+		},
+		Style: "bg-gradient-to-tl from-orange-200 from-50% to-green-200",
+	}
 
 	tiles := []Tile{grass, forest, sand, water}
 
-	rotatableTiles := []Tile{waterSand, waterCorner, sandCorner} //, sandGrass} //, sandGrassCorner}
+	rotatableTiles := []Tile{waterSand, waterSandCorner, sandWaterCorner, sandGrass, sandGrassCorner, grassSandCorner}
 	for _, tile := range rotatableTiles {
 		for i := 0; i < 4; i++ {
 			tiles = append(tiles, rotate(tile, i))

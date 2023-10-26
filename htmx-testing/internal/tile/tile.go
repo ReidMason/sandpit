@@ -115,9 +115,39 @@ func GetAllTiles() []Tile {
 		Style: "bg-gradient-to-tl from-orange-200 from-50% to-green-200",
 	}
 
+	forestGrass := Tile{
+		Sockets: [4]socket.Socket{
+			socket.ForestT,
+			socket.ForestGrassE,
+			socket.GrassT,
+			socket.ForestGrassW,
+		},
+		Style: "bg-gradient-to-t from-green-200 to-green-400",
+	}
+
+	forestGrassCorner := Tile{
+		Sockets: [4]socket.Socket{
+			socket.ForestGrassCornerN,
+			socket.GrassT,
+			socket.GrassT,
+			socket.ForestGrassCornerW,
+		},
+		Style: "bg-gradient-to-tl from-green-200 from-50% to-green-400",
+	}
+
+	grassForestCorner := Tile{
+		Sockets: [4]socket.Socket{
+			socket.GrassForestCornerN,
+			socket.GrassT,
+			socket.GrassT,
+			socket.GrassForestCornerW,
+		},
+		Style: "bg-gradient-to-tl from-green-400 from-50% to-green-200",
+	}
+
 	tiles := []Tile{grass, forest, sand, water}
 
-	rotatableTiles := []Tile{waterSand, waterSandCorner, sandWaterCorner, sandGrass, sandGrassCorner, grassSandCorner}
+	rotatableTiles := []Tile{waterSand, waterSandCorner, sandWaterCorner, sandGrass, sandGrassCorner, grassSandCorner, forestGrass, forestGrassCorner, grassForestCorner}
 	for _, tile := range rotatableTiles {
 		for i := 0; i < 4; i++ {
 			tiles = append(tiles, rotate(tile, i))

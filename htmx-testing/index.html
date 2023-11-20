@@ -14,7 +14,12 @@
     <script src="https://unpkg.com/htmx.org/dist/ext/ws.js"></script>
   </head>
   <body class="bg-slate-800 h-screen text-slate-50 p-8">
-    <div id="text-wrapper" class="bg-slate-900 rounded p-4">
+    <div hx-trigger="theme-update from:body" hx-get="/getThing">testing</div>
+    <div
+      hx-trigger="theme-update from:body"
+      hx-get="/getThing"
+      class="bg-slate-900 rounded p-4"
+    >
       <p class="mb-4 text-xl font-semibold">Hello World!</p>
       <p class="max-w-lg">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Dignissimos
@@ -28,6 +33,7 @@
         class="p-2 bg-slate-500 rounded"
         hx-post="/setTheme1"
         hx-trigger="click"
+        hx-swap="none"
       >
         Theme 1
       </button>

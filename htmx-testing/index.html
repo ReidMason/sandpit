@@ -13,13 +13,31 @@
     ></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/ws.js"></script>
   </head>
-  <body>
-    <div
-      hx-ext="ws"
-      ws-connect="/socket"
-      class="flex h-screen items-center justify-center bg-slate-800"
-    >
-      <div id="time" hx-swap-oob="afterbegin"></div>
+  <body class="bg-slate-800 h-screen text-slate-50 p-8">
+    <div id="text-wrapper" class="bg-slate-900 rounded p-4">
+      <p class="mb-4 text-xl font-semibold">Hello World!</p>
+      <p class="max-w-lg">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dignissimos
+        minus explicabo culpa totam nihil rerum accusantium aliquid consequatur
+        aspernatur doloremque, quaerat asperiores omnis provident eaque unde eos
+        ullam iure aperiam.
+      </p>
+    </div>
+    <div class="mt-8 flex gap-8">
+      <button
+        class="p-2 bg-slate-500 rounded"
+        hx-post="/setTheme1"
+        hx-trigger="click"
+      >
+        Theme 1
+      </button>
+      <button
+        class="p-2 bg-slate-500 rounded"
+        hx-post="/setTheme2"
+        hx-trigger="click"
+      >
+        Theme 2
+      </button>
     </div>
   </body>
 </html>

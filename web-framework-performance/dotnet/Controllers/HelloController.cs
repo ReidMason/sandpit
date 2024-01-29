@@ -16,6 +16,6 @@ public class HelloController : ControllerBase
     [HttpGet()]
     public IActionResult Get()
     {
-      return Ok("Hello World!");
+        return Ok("Hello World!");
     }
 }

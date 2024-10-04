@@ -6,3 +6,7 @@ node_modules
 .pnpm
 target
 sqlc/data/postgres
+dist-newstyle
+obj/
+bin/
+.idea

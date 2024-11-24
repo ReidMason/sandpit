@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"log"
+	"time"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -31,10 +33,19 @@ func main() {
 		log.Fatalf("Failed to declare a queue: %s", err)
 	}
 
+	err = ch.Qos(
+		1,     // prefetch count
+		0,     // prefetch size
+		false, // global
+	)
+	if err != nil {
+		log.Fatalf("Failed to set QoS: %s", err)
+	}
+
 	msgs, err := ch.Consume(
 		q.Name, // queue
 		"",     // consumer
-		true,   // auto-ack
+		false,  // auto-ack
 		false,  // exclusive
 		false,  // no-local
 		false,  // no-wait
@@ -46,9 +57,17 @@ func main() {
 
 	var forever chan struct{}
 
-	for d := range msgs {
-		log.Printf("Received a message: %s", d.Body)
-	}
+	go func() {
+		for d := range msgs {
+			log.Printf("Received a message: %s", d.Body)
+			dotCount := bytes.Count(d.Body, []byte("."))
+			t := time.Duration(dotCount)
+			log.Printf("Working for %d seconds", t)
+			time.Sleep(t * time.Second)
+			log.Printf("Done")
+			d.Ack(false)
+		}
+	}()
 
 	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
 	<-forever

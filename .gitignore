@@ -10,3 +10,4 @@ dist-newstyle
 obj/
 bin/
 .idea
+docker-data/

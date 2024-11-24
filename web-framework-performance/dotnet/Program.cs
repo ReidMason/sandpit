@@ -3,12 +3,6 @@ using Serilog.Sinks.Grafana.Loki;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .WriteTo.GrafanaLoki("http://localhost:3100", new[] { new LokiLabel { Key = "job", Value = "dotnet" }})
-    .CreateLogger();
-
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -24,18 +18,16 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/api/hello", () =>
-{
-    // Create an object to log
-    var myObject = new { Name = "John Doe", Age = 30 };
+app.MapGet(
+        "/api/hello",
+        () =>
+        {
+            return "Hello World";
+        }
+    )
+    .WithName("hello")
+    .WithOpenApi();
 
-    Log.Information("Hello, World! {@myObject}", myObject);
-
-    return "Hello, World!";
-})
-.WithName("hello")
-.WithOpenApi();
-
-app.Run();
+app.Run("http://localhost:5001");
 
 Log.CloseAndFlush();

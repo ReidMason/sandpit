@@ -46,7 +46,7 @@ func main() {
 
 	// Split into 100 chunks
 	chunkSize := len(photos) / 100
-	chunks := make([][]Photo, 100)
+	chunks := make(map[int][]Photo)
 	for i := 0; i < 100; i++ {
 		start := i * chunkSize
 		end := (i + 1) * chunkSize

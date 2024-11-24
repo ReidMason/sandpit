@@ -36,18 +36,22 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	body := "Hello World! - " + time.Now().Format(time.RFC3339)
-	err = ch.PublishWithContext(ctx,
-		"",     // exchange
-		q.Name, // routing key
-		false,  // mandatory
-		false,  // immediate
-		amqp.Publishing{
-			ContentType: "text/plain",
-			Body:        []byte(body),
-		})
-	if err != nil {
-		log.Fatalf("Failed to publish a message: %v", err)
+	for {
+		body := "Hello World. - " + time.Now().Format(time.RFC3339)
+		err = ch.PublishWithContext(ctx,
+			"",     // exchange
+			q.Name, // routing key
+			false,  // mandatory
+			false,  // immediate
+			amqp.Publishing{
+				ContentType: "text/plain",
+				Body:        []byte(body),
+			})
+		if err != nil {
+			log.Fatalf("Failed to publish a message: %v", err)
+		}
+		log.Printf(" [x] Sent %s\n", body)
+
+		time.Sleep(500 * time.Millisecond)
 	}
-	log.Printf(" [x] Sent %s\n", body)
 }

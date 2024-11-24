@@ -7,6 +7,8 @@ import (
 
 	"github.com/dave/jennifer/jen"
 	_ "github.com/mattn/go-sqlite3"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 func main() {
@@ -20,27 +22,34 @@ func main() {
 
 	tables := schemaextractor.GetTableSchemas(db)
 	for _, table := range tables {
-		generateStructs(table)
+		generateStruct(table)
 	}
 
 	defer db.Close()
 }
 
-func generateStructs(table schemaextractor.TableSchema) {
-	f := jen.NewFile("output")
-
+func generateStruct(table schemaextractor.TableSchema) {
 	fields := make([]jen.Code, 0)
 	for _, column := range table.Columns {
 		goType := schemaextractor.GetGoType(column.Type)
-		field := jen.Id(column.Name).Add(getFieldType(goType))
+		field := jen.Id(title(column.Name))
+		if column.Nullable {
+			field = field.Op("*")
+		}
+		field = field.Add(getFieldType(goType))
 		fields = append(fields, field)
 	}
 
-	f.Type().Id(table.Name).Struct(
+	f := jen.Type().Id(title(table.Name)).Struct(
 		fields...,
 	)
 
 	fmt.Printf("%#v", f)
+}
+
+func title(s string) string {
+	caser := cases.Title(language.English)
+	return caser.String(s)
 }
 
 func getFieldType(gotype schemaextractor.GoType) jen.Code {

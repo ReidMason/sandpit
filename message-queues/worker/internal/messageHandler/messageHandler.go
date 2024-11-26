@@ -39,9 +39,22 @@ func (m *MessageHandler) HandleMessage(message string) (bool, error) {
 		}
 
 		if album.Id == -1 {
-			m.logger.Info("Album doesn't exist", slog.Int("albumId", item.AlbumId))
+			albumId, err := m.storage.CreateAlbum(item.AlbumId, "Album "+strconv.Itoa(item.AlbumId))
+			if err != nil {
+				m.logger.Error("Failed to create album", slog.Any("error", err))
+				return false, err
+			}
+
+			album.Id = albumId
+		}
+
+		err = m.storage.CreatePhoto(item.Id, item.Title, album.Id)
+		if err != nil {
+			m.logger.Error("Failed to create photo", slog.Any("error", err))
+			return false, err
 		}
 	}
 
+	m.logger.Info("Finished processing message")
 	return true, nil
 }

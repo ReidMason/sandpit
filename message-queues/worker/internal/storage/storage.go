@@ -3,6 +3,7 @@ package storage
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log/slog"
 
 	_ "github.com/lib/pq"
@@ -63,11 +64,12 @@ func (s *PostgresStorage) GetDataset(id int) ([]Data, error) {
 type Album struct {
 	Title     string `json:"title"`
 	CreatedAt string `json:"createdAt"`
+	Ref       int    `json:"ref"`
 	Id        int    `json:"id"`
 }
 
 func (s *PostgresStorage) GetAlbum(albumId int) (Album, error) {
-	query := "SELECT * FROM Albums WHERE id = $1"
+	query := "SELECT * FROM Albums WHERE ref = $1"
 	rows, err := s.db.Query(query, albumId)
 	if err != nil {
 		return Album{}, err
@@ -77,9 +79,10 @@ func (s *PostgresStorage) GetAlbum(albumId int) (Album, error) {
 	albums := make([]Album, 0)
 	for rows.Next() {
 		var id int
+		var ref int
 		var title string
 		var createdAt string
-		if err := rows.Scan(&id, &title, &createdAt); err != nil {
+		if err := rows.Scan(&id, &ref, &title, &createdAt); err != nil {
 			return Album{}, err
 		}
 	}
@@ -89,4 +92,34 @@ func (s *PostgresStorage) GetAlbum(albumId int) (Album, error) {
 	}
 
 	return albums[0], nil
+}
+
+func (s *PostgresStorage) CreateAlbum(ref int, title string) (int, error) {
+	query := `INSERT INTO albums (ref, title)
+  VALUES ($1, $2) 
+  ON CONFLICT (ref) DO UPDATE 
+  SET title = EXCLUDED.title 
+  RETURNING id`
+
+	var id int
+	err := s.db.QueryRow(query, ref, title).Scan(&id)
+	if err != nil {
+		return 0, fmt.Errorf("failed to insert album: %w", err)
+	}
+
+	return id, nil
+}
+
+func (s *PostgresStorage) CreatePhoto(ref int, title string, albumId int) error {
+	query := `INSERT INTO photos (ref, album_id, title)
+  VALUES ($1, $2, $3)
+  ON CONFLICT (ref) DO UPDATE
+  SET title = EXCLUDED.title`
+
+	_, err := s.db.Exec(query, ref, albumId, title)
+	if err != nil {
+		return fmt.Errorf("failed to insert photo: %w", err)
+	}
+
+	return nil
 }

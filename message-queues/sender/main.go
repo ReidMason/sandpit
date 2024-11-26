@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"log"
+	"strconv"
+	"sync"
 	"time"
 
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -36,22 +38,28 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	for {
-		body := "Hello World. - " + time.Now().Format(time.RFC3339)
-		err = ch.PublishWithContext(ctx,
-			"",     // exchange
-			q.Name, // routing key
-			false,  // mandatory
-			false,  // immediate
-			amqp.Publishing{
-				ContentType: "text/plain",
-				Body:        []byte(body),
-			})
-		if err != nil {
-			log.Fatalf("Failed to publish a message: %v", err)
-		}
-		log.Printf(" [x] Sent %s\n", body)
-
-		time.Sleep(500 * time.Millisecond)
+	var wg sync.WaitGroup
+	for i := 0; i < 100; i++ {
+		wg.Add(1)
+		go publish(ctx, ch, q, strconv.Itoa(i))
 	}
+
+	wg.Wait()
+}
+
+func publish(ctx context.Context, ch *amqp.Channel, q amqp.Queue, message string) {
+	body := message
+	err := ch.PublishWithContext(ctx,
+		"",     // exchange
+		q.Name, // routing key
+		false,  // mandatory
+		false,  // immediate
+		amqp.Publishing{
+			ContentType: "text/plain",
+			Body:        []byte(body),
+		})
+	if err != nil {
+		log.Fatalf("Failed to publish a message: %v", err)
+	}
+	log.Printf(" [x] Sent %s\n", body)
 }

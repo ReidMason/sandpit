@@ -3,6 +3,7 @@ package messageHandler
 import (
 	"log/slog"
 	"strconv"
+	"time"
 	"worker/internal/storage"
 )
 
@@ -25,11 +26,28 @@ func (m *MessageHandler) HandleMessage(message string) (bool, error) {
 		return true, nil
 	}
 
-	data, err := m.storage.GetDataset(id)
+	m.logger.Info("Getting dataset")
+	processing, data, err := m.storage.GetDataset(id)
 	if err != nil {
 		m.logger.Error("Failed to get dataset", slog.Any("error", err))
 		return true, err
 	}
+
+	if processing {
+		m.logger.Info("Dataset is already being processed", slog.Int("id", id))
+		return true, nil
+	}
+
+	defer func() {
+		err := m.storage.UpdateData(id, false)
+		if err != nil {
+			m.logger.Error("Failed to update data", slog.Any("error", err))
+		}
+	}()
+
+	m.logger.Info("sleeping")
+	time.Sleep(1 * time.Second)
+	m.logger.Info("woke")
 
 	for _, item := range data {
 		album, err := m.storage.GetAlbum(item.AlbumId)

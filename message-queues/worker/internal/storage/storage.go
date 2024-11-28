@@ -36,11 +36,17 @@ type Data struct {
 	AlbumId int    `json:"albumId"`
 }
 
-func (s *PostgresStorage) GetDataset(id int) ([]Data, error) {
-	query := "SELECT * FROM data WHERE id = $1"
-	rows, err := s.db.Query(query, id)
+func (s *PostgresStorage) GetDataset(id int) (bool, []Data, error) {
+	tx, err := s.db.Begin()
 	if err != nil {
-		return nil, err
+		return false, nil, err
+	}
+	defer tx.Rollback()
+
+	query := `SELECT * FROM data WHERE id = $1 FOR UPDATE`
+	rows, err := tx.Query(query, id)
+	if err != nil {
+		return false, nil, err
 	}
 	defer rows.Close()
 
@@ -48,17 +54,60 @@ func (s *PostgresStorage) GetDataset(id int) ([]Data, error) {
 	for rows.Next() {
 		var id int
 		var rawData string
-		if err := rows.Scan(&id, &rawData); err != nil {
-			return nil, err
+		var processing bool
+		if err = rows.Scan(&id, &rawData, &processing); err != nil {
+			return false, nil, err
 		}
 
-		err := json.Unmarshal([]byte(rawData), &data)
+		temp := processing // Explicitly read the value
+		_ = temp           // Suppress unused variable warning
+
+		if processing {
+			return true, nil, nil
+		}
+
+		err = json.Unmarshal([]byte(rawData), &data)
 		if err != nil {
-			return nil, err
+			return false, nil, err
 		}
 	}
+	rows.Close()
 
-	return data, nil
+	fmt.Println("setting processing as true")
+	query = `UPDATE data
+    SET processing = true
+    WHERE id = $1`
+	result, err := tx.Exec(query, id)
+	if err != nil {
+		fmt.Println("error here 2")
+		return false, nil, err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return false, nil, err
+	}
+	if rowsAffected == 0 {
+		fmt.Println("no rows affected")
+		return false, nil, nil
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return false, nil, err
+	}
+
+	return false, data, nil
+}
+
+func (s *PostgresStorage) UpdateData(id int, processing bool) error {
+	fmt.Println("updating data", id, processing)
+	query := `UPDATE data
+    SET processing = $1
+    WHERE id = $2`
+	_, err := s.db.Exec(query, processing, id)
+
+	return err
 }
 
 type Album struct {

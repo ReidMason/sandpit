@@ -3,6 +3,7 @@ package storage
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log/slog"
 
@@ -73,13 +74,11 @@ func (s *PostgresStorage) GetDataset(id int) (bool, []Data, error) {
 	}
 	rows.Close()
 
-	fmt.Println("setting processing as true")
 	query = `UPDATE data
     SET processing = true
     WHERE id = $1`
 	result, err := tx.Exec(query, id)
 	if err != nil {
-		fmt.Println("error here 2")
 		return false, nil, err
 	}
 
@@ -88,8 +87,7 @@ func (s *PostgresStorage) GetDataset(id int) (bool, []Data, error) {
 		return false, nil, err
 	}
 	if rowsAffected == 0 {
-		fmt.Println("no rows affected")
-		return false, nil, nil
+		return false, nil, errors.New("no rows affected")
 	}
 
 	err = tx.Commit()
@@ -101,7 +99,6 @@ func (s *PostgresStorage) GetDataset(id int) (bool, []Data, error) {
 }
 
 func (s *PostgresStorage) UpdateData(id int, processing bool) error {
-	fmt.Println("updating data", id, processing)
 	query := `UPDATE data
     SET processing = $1
     WHERE id = $2`

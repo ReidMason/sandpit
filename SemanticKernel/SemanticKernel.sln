@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemanticKernel", "SemanticKernel\SemanticKernel.csproj", "{291CC59E-B8C6-4489-8E6A-272637EAAA5B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{291CC59E-B8C6-4489-8E6A-272637EAAA5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{291CC59E-B8C6-4489-8E6A-272637EAAA5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{291CC59E-B8C6-4489-8E6A-272637EAAA5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{291CC59E-B8C6-4489-8E6A-272637EAAA5B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

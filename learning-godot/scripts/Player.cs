@@ -13,11 +13,17 @@ public partial class Player : CharacterBody2D
 
 	public void GetInput()
 	{
-		Vector2 inputDirection = Input.GetVector(Keys.Left, Keys.Right, Keys.Up, Keys.Down);
-		Velocity = inputDirection * Speed;
-		
-		var actionEvents = InputMap.HasAction(Keys.Left);
-		GD.Print(actionEvents);
+		Velocity = GetVelocity();
+	}
+	
+	private Vector2 GetVelocity()
+	{
+		return GetInputVector() * Speed;
+	}
+	
+	private Vector2 GetInputVector()
+	{
+		return Input.GetVector(Keys.Left, Keys.Right, Keys.Up, Keys.Down);
 	}
 
 	public override void _PhysicsProcess(double delta)

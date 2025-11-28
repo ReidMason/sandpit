@@ -9,6 +9,7 @@ public partial class Player : CharacterBody2D
 	private AnimatedSprite2D _animatedSprite;
 	
 	public const float Speed = 100.0f;
+	private float attackSpeed = 0.5f;
 	
 	public override void _Ready()
 	{
@@ -16,7 +17,7 @@ public partial class Player : CharacterBody2D
 		this.ZIndex = (int)ZIndexes.Player;
 		
 		_attackTimer.Timeout += OnAttackTimerTimeout;
-		AddToGroup("Enemies");
+		_attackTimer.WaitTime = attackSpeed;
 	}
 	
 	private void OnAttackTimerTimeout()
@@ -26,14 +27,12 @@ public partial class Player : CharacterBody2D
 	
 	private void PerformAttack()
 	{
-		GD.Print("Attacking!");
-
 		var knifeScene = GD.Load<PackedScene>("res://scenes/knife.tscn");
 		var knife = knifeScene.Instantiate<Knife>();
 		GetParent().AddChild(knife);
 
 		float startAngle = -90 + (_animatedSprite.FlipH ? 180 : 0);
-		knife.Initialize(this, startAngle, 0, -5);
+		knife.Initialize(this, startAngle, 5, -5);
 	}
 
 	public void GetInput()

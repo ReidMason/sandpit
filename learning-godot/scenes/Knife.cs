@@ -1,6 +1,11 @@
 using Godot;
 using System;
 
+public record Offset {
+	public float X { get; set; }
+	public float Y { get; set; }
+}
+
 public partial class Knife : Area2D
 {
 	private float _startAngle = 0;
@@ -10,11 +15,11 @@ public partial class Knife : Area2D
 	private float _radius;
 	private float _elapsed = 0f;
 	private Player _player;
+	private Offset _offset;
 	
 	public override void _Ready()
 	{
 		Visible = false;
-		
 		BodyEntered += OnBodyEntered;
 	}
 	
@@ -24,21 +29,21 @@ public partial class Knife : Area2D
 		
 		var progress = Mathf.Clamp(_elapsed / _sweepDuration, 0f, 1f);
 		
-		var easedProgress = 1f - Mathf.Pow(1f - progress, 3f); // Cubic ease-out
+		var easedProgress = 1 - Mathf.Pow(1 - progress, 3); // Cubic ease-out
 		_currentRotation = _startAngle + (_sweepRange * easedProgress);
 		
 		UpdatePosition();
-		
-		Rotation = _currentRotation + Mathf.Pi / 2;
-		
+			
 		if (progress >= 1f) QueueFree();
 	}
 	
 	private void UpdatePosition()
 	{
+		Rotation = _currentRotation + _sweepRange;
+
 		var playerPosition = _player.GlobalPosition;
-		float x = playerPosition.X + Mathf.Cos(_currentRotation) * _radius;
-		float y = playerPosition.Y + Mathf.Sin(_currentRotation) * _radius;
+		float x = playerPosition.X + _offset.X;
+		float y = playerPosition.Y + _offset.Y;
 		GlobalPosition = new Vector2(x, y);
 	}
 	
@@ -55,9 +60,9 @@ public partial class Knife : Area2D
 	{
 		_player = player;
 		_startAngle = startAngle;
-		GlobalPosition = new Vector2(xOffset, yOffset);
 		_radius = radius;
 		_sweepDuration = duration;
+		_offset = new Offset { X = xOffset, Y = yOffset };
 		_currentRotation = _startAngle;
 
 		Rotation = _currentRotation + Mathf.Pi / 2;

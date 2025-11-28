@@ -31,7 +31,9 @@ public partial class Player : CharacterBody2D
 		var knifeScene = GD.Load<PackedScene>("res://scenes/knife.tscn");
 		var knife = knifeScene.Instantiate<Knife>();
 		GetParent().AddChild(knife);
-		knife.Initialize(this, -90, 0, -5);
+
+		float startAngle = -90 + (_animatedSprite.FlipH ? 180 : 0);
+		knife.Initialize(this, startAngle, 0, -5);
 	}
 
 	public void GetInput()

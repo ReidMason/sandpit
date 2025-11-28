@@ -5,7 +5,7 @@ public partial class Coin : Area2D
 { 
 	public override void _Ready()
 	{
-		this.BodyEntered += OnBodyEntered;
+		BodyEntered += OnBodyEntered;
 	}
 	
 	private void OnBodyEntered(Node2D body)

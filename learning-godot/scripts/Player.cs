@@ -16,6 +16,7 @@ public partial class Player : CharacterBody2D
 		this.ZIndex = (int)ZIndexes.Player;
 		
 		_attackTimer.Timeout += OnAttackTimerTimeout;
+		AddToGroup("Enemies");
 	}
 	
 	private void OnAttackTimerTimeout()
@@ -30,7 +31,6 @@ public partial class Player : CharacterBody2D
 		var knifeScene = GD.Load<PackedScene>("res://scenes/knife.tscn");
 		var knife = knifeScene.Instantiate<Knife>();
 		GetParent().AddChild(knife);
-
 		knife.Initialize(this, -90, 0, -5);
 	}
 

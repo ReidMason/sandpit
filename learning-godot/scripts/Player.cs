@@ -7,6 +7,8 @@ public partial class Player : CharacterBody2D
 	private Timer _attackTimer;
 	[Export]
 	private AnimatedSprite2D _animatedSprite;
+	[Export]
+	private PackedScene _knifeScene;
 	
 	public const float Speed = 100.0f;
 	private float attackSpeed = 2f;
@@ -27,8 +29,7 @@ public partial class Player : CharacterBody2D
 	
 	private void PerformAttack()
 	{
-		var knifeScene = GD.Load<PackedScene>("res://scenes/knife.tscn");
-		var knife = knifeScene.Instantiate<Knife>();
+		var knife = _knifeScene.Instantiate<Knife>();
 		GetParent().AddChild(knife);
 
 		float startAngle = -90 + (_animatedSprite.FlipH ? 180 : 0);

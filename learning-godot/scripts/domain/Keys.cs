@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using Godot;
 
-namespace scripts.domain;
-
 public static class Keys
 {
 	public const string Left = "left";

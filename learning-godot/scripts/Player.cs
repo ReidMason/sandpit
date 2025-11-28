@@ -9,8 +9,8 @@ public partial class Player : CharacterBody2D
 	private AnimatedSprite2D _animatedSprite;
 	
 	public const float Speed = 100.0f;
-	private float attackSpeed = 0.5f;
-	
+	private float attackSpeed = 2f;
+
 	public override void _Ready()
 	{
 		Keys.SetupInputMap();

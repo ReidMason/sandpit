@@ -77,5 +77,8 @@ public partial class Knife : Area2D
 		_radius = radius;
 		_sweepDuration = duration;
 		_currentRotation = _startAngle;
+
+		UpdatePosition();
+		Rotation = _currentRotation + Mathf.Pi / 2;
 	}
 }

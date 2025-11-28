@@ -31,7 +31,7 @@ public partial class Player : CharacterBody2D
 		var knife = knifeScene.Instantiate<Knife>();
 		GetParent().AddChild(knife);
 
-		knife.Initialize(this, 0, 0, -5);
+		knife.Initialize(this, -90, 0, -5);
 	}
 
 	public void GetInput()

@@ -168,7 +168,7 @@ tile_set = SubResource("TileSet_lbhrr")
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 
 [node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
-motion_mirroring = Vector2(562, 0)
+motion_mirroring = Vector2(562, 575)
 
 [node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/ParallaxLayer"]
 scale = Vector2(0.3, 0.3)

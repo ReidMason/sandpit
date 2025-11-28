@@ -3,8 +3,8 @@ using System;
 
 public partial class Knife : Area2D
 {
-	private float _startAngle;
-	private float _currentRotation = 0f;
+	private float _startAngle = 0;
+	private float _currentRotation = 0;
 	private float _sweepDuration = 0.5f; // Seconds
 	private float _sweepRange = Mathf.Pi / 2; // 90 degrees in radians
 	private float _radius;
@@ -13,8 +13,6 @@ public partial class Knife : Area2D
 	
 	public override void _Ready()
 	{
-		_startAngle = 0;
-		_currentRotation = _startAngle;
 		Visible = false;
 		
 		BodyEntered += OnBodyEntered;
@@ -24,9 +22,9 @@ public partial class Knife : Area2D
 	{
 		_elapsed += (float)delta;
 		
-		float progress = Mathf.Clamp(_elapsed / _sweepDuration, 0f, 1f);
+		var progress = Mathf.Clamp(_elapsed / _sweepDuration, 0f, 1f);
 		
-		float easedProgress = 1f - Mathf.Pow(1f - progress, 3f); // Cubic ease-out
+		var easedProgress = 1f - Mathf.Pow(1f - progress, 3f); // Cubic ease-out
 		_currentRotation = _startAngle + (_sweepRange * easedProgress);
 		
 		UpdatePosition();
@@ -46,10 +44,10 @@ public partial class Knife : Area2D
 	
 	private void OnBodyEntered(Node2D body)
 	{
-		GD.Print($"Knife hit {body.Name}!");
-		if (body.IsInGroup("enemies"))
+		if (body.IsInGroup(CollisionGroups.Enemies))
 		{
-			GD.Print($"Knife hit {body.Name}!");
+			body.QueueFree();
+			GameManager.Instance.AddScore(1);
 		}
 	}
 	

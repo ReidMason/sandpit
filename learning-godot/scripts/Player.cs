@@ -32,7 +32,7 @@ public partial class Player : CharacterBody2D
 		var knife = _knifeScene.Instantiate<Knife>();
 		GetParent().AddChild(knife);
 
-		float startAngle = -90 + (_animatedSprite.FlipH ? 180 : 0);
+		float startAngle = _animatedSprite.FlipH ? 90 : -90;
 		knife.Initialize(this, startAngle, 5, -5);
 	}
 

@@ -169,14 +169,13 @@ _animatedSprite = NodePath("AnimatedSprite2D")
 _knifeScene = ExtResource("2_qhqgy")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(0, -12)
+position = Vector2(0, -4)
 sprite_frames = SubResource("SpriteFrames_tuyoq")
 animation = &"run"
 frame = 7
 frame_progress = 0.47615105
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, -7)
 shape = SubResource("CapsuleShape2D_3vyb7")
 
 [node name="AttackTimer" type="Timer" parent="."]

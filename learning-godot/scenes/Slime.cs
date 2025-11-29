@@ -11,8 +11,7 @@ public partial class Slime : CharacterBody2D
 	
 	private double _health = 100;
 	private double _maxHealth = 100;
-	private float _speed = 100;
-	private bool _collidingWithPlayer = false;
+	private float _speed = 50;
 	
 	public override void _Ready()
 	{
@@ -20,36 +19,23 @@ public partial class Slime : CharacterBody2D
 		_healthBar.MaxValue = _maxHealth;
 		_healthBar.MinValue = 0;
 		_healthBar.Value = _health;
-		
-		_damageArea.BodyEntered += OnDamageAreaBodyEntered;
-		_damageArea.BodyExited += OnDamageAreaBodyExited;
-	}
-	
-	private void OnDamageAreaBodyEntered(Node2D body)
-	{
-		if (body is Player)
-		{
-			_collidingWithPlayer = true;
-		}
-	}
-	
-	private void OnDamageAreaBodyExited(Node2D body)
-	{
-		if (body is Player)
-		{
-			GD.Print("Exited the damage area");
-			_collidingWithPlayer = false;
-		}
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
 		var player = GameManager.Instance.Player;
-		if (player is null || _collidingWithPlayer) return;
+		if (player is null) return;
 
 		var direction = GlobalPosition.DirectionTo(player.GlobalPosition);
 		Velocity = direction * _speed;
-		MoveAndCollide(Velocity * (float)delta);
+		
+		var collision = MoveAndCollide(Velocity * (float)delta);
+		if (collision is not null && collision.GetCollider() is Player)
+		{
+			GD.Print("There was a collision");
+		} else {
+			GD.Print("No more collision");
+		}
 	}
 	
 	public void Damage(double amount)

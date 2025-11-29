@@ -29,3 +29,13 @@ services:
       - ./data/grafana:/var/lib/grafana
     ports:
       - 3000:3000
+  
+  seq:
+    image: datalust/seq
+    restart: unless-stopped
+    environment:
+      - ACCEPT_EULA=Y
+      - ./data/seq:/data
+    ports:
+      - 5341:80
+  

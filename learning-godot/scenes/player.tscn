@@ -1,7 +1,8 @@
-[gd_scene load_steps=25 format=3 uid="uid://bklmypmifkebc"]
+[gd_scene load_steps=26 format=3 uid="uid://bklmypmifkebc"]
 
 [ext_resource type="Texture2D" uid="uid://blptka5ylshfe" path="res://resources/assets/sprites/knight.png" id="1_3vyb7"]
 [ext_resource type="Script" uid="uid://b8rdaonok16ay" path="res://scripts/Player.cs" id="1_g2els"]
+[ext_resource type="PackedScene" uid="uid://bwpt1k70dpu5k" path="res://scenes/knife.tscn" id="2_qhqgy"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_g2els"]
 atlas = ExtResource("1_3vyb7")
@@ -165,6 +166,7 @@ collision_layer = 2
 script = ExtResource("1_g2els")
 _attackTimer = NodePath("AttackTimer")
 _animatedSprite = NodePath("AnimatedSprite2D")
+_knifeScene = ExtResource("2_qhqgy")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -12)

@@ -3,10 +3,13 @@ using System;
 
 public partial class GameManager : Node
 {
-	public static GameManager Instance { get; private set; }
-
 	[Export]
 	private Label _scoreLabel; 
+
+	[Export]
+	public Player Player;
+
+	public static GameManager Instance { get; private set; }
 	
 	private int Score { get; set; } = 0;
 	

@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://c1rmpik2vp06m"]
+[gd_scene load_steps=12 format=3 uid="uid://c1rmpik2vp06m"]
 
 [ext_resource type="Texture2D" uid="uid://oed8l7bqus4f" path="res://resources/assets/sprites/slime_purple.png" id="1_371uh"]
 [ext_resource type="Script" uid="uid://kkwxjl825mf2" path="res://scenes/Slime.cs" id="1_p2gj0"]
@@ -48,9 +48,13 @@ bg_color = Color(0.58547586, 0.60539764, 0.60456854, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n6pvg"]
 bg_color = Color(0.23819864, 0.7045233, 0.3801388, 1)
 
-[node name="Slime" type="CharacterBody2D" node_paths=PackedStringArray("_healthBar")]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_p2gj0"]
+size = Vector2(12, 14)
+
+[node name="Slime" type="CharacterBody2D" node_paths=PackedStringArray("_healthBar", "_damageArea")]
 script = ExtResource("1_p2gj0")
 _healthBar = NodePath("HealthBar")
+_damageArea = NodePath("DamageArea")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_fd6lc")
@@ -70,3 +74,10 @@ theme_override_styles/background = SubResource("StyleBoxFlat_p2gj0")
 theme_override_styles/fill = SubResource("StyleBoxFlat_n6pvg")
 value = 100.0
 show_percentage = false
+
+[node name="DamageArea" type="Area2D" parent="."]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DamageArea"]
+position = Vector2(0, 6)
+shape = SubResource("RectangleShape2D_p2gj0")

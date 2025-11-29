@@ -21,4 +21,9 @@ public partial class GameManager : Node
 		Score += value;
 		_scoreLabel.Text = $"Score: {Score}";
 	}
+	
+	public int GetScore()
+	{
+		return Score;
+	}
 }

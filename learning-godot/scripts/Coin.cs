@@ -11,6 +11,6 @@ public partial class Coin : Area2D
 	private void OnBodyEntered(Node2D body)
 	{
 		QueueFree();
-		GameManager.Instance.AddScore(1);
+		GameManager.Instance.AddScore(50);
 	}
 }

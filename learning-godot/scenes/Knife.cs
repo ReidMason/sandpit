@@ -17,6 +17,7 @@ public partial class Knife : Area2D
 	private Player _player;
 	private Offset _offset;
 	private bool _flipped;
+	private double _damage = 1;
 	
 	public override void _Ready()
 	{
@@ -51,11 +52,15 @@ public partial class Knife : Area2D
 	
 	private void OnBodyEntered(Node2D body)
 	{
-		if (body.IsInGroup(CollisionGroups.Enemies))
+		if (body.IsInGroup(CollisionGroups.Enemies) && body is Slime slime)
 		{
-			body.QueueFree();
-			GameManager.Instance.AddScore(1);
+			slime.Damage(CalculateDamage());
 		}
+	}
+	
+	private double CalculateDamage()
+	{
+		return _damage + GameManager.Instance.GetScore();
 	}
 	
 	public void Initialize(Player player, bool flipped, float xOffset = 0f, float yOffset = 0f, float radius = 5f, float duration = 0.5f)
